@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 240" role="img" aria-label="Yaflix">
+  <defs>
+    <linearGradient id="btn" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff4d4d"/>
+      <stop offset="55%" stop-color="#ff1a1a"/>
+      <stop offset="100%" stop-color="#c40000"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="920" height="240" fill="#000"/>
+  <g filter="url(#glow)">
+    <rect x="28" y="46" width="168" height="118" rx="32" fill="url(#btn)"/>
+    <polygon points="92,78 92,132 146,105" fill="#fff"/>
+    <text x="216" y="148" font-family="Arial Black, Impact, sans-serif" font-size="118" font-weight="800" letter-spacing="-6">
+      <tspan fill="#ffffff">Ya</tspan><tspan fill="#ff1a1a">flix</tspan>
+    </text>
+    <path d="M792 42 L888 176" stroke="#ff2a2a" stroke-width="16" stroke-linecap="round"/>
+  </g>
+</svg>
