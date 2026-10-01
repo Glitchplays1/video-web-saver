@@ -1,42 +1,32 @@
-# Video Web Saver
+# Yaflix
 
-A simple website you can run in any modern browser to keep:
+A video library you can open in a browser. It saves:
 
-- links to videos you are allowed to save
+- links to videos you are allowed to keep
 - video files from your own computer
 
-Everything stays on your device. Links are stored in `localStorage`. Uploaded video files and their pictures are stored in IndexedDB.
-
-Each card shows a picture of the video:
-- uploaded files use a frame from the video
-- YouTube links use the public thumbnail picture
-- other links can use an optional picture URL you paste
+Pictures show on every card as soon as you press **Save video**. Lists are stored in `localStorage`. Video files and captured pictures are stored in IndexedDB on this device.
 
 ## What this is not
 
-This is not a YouTube / TikTok / Instagram downloader.
+This is not a movie download site. Only save videos you made, videos you have permission to keep, or videos that are free to use.
 
-Only save videos you made yourself, videos you have permission to keep, or videos that are clearly free to use.
+## Features
 
-## How to use
-
-1. Open `index.html` in a browser, or host the folder on GitHub Pages.
-2. Choose **Save a link** or **Save a file from this device**.
-3. Add a title and optional notes.
-4. Click **Save to library**.
-5. Play saved files, open links, search, export, or delete items.
+1. Modern dark UI with the Yaflix logo and loading screen
+2. Easy navigation: Home, Add, Library, Storage
+3. Responsive layout for phones and desktops
+4. Search, filters, favorites, sort, export, and import
 
 ## GitHub Pages
 
-In the repository settings, turn on Pages from the `main` branch root. Then visit:
+Repository: https://github.com/Glitchplays1/Yaflix
 
-`https://glitchplays1.github.io/video-web-saver/`
+After Pages is turned on from the `main` branch, open:
 
-## Files
+https://glitchplays1.github.io/Yaflix/
 
-- `index.html` — page structure
-- `styles.css` — look and layout
-- `app.js` — save, search, play, import/export
+The same site files can also live in https://github.com/Glitchplays1/video-web-saver
 
 ## License
 

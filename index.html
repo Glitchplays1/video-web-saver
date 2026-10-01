@@ -3,73 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yaflix</title>
-  <meta name="description" content="Save video links and your own video files in your browser." />
+  <title>Yaflix — your video library</title>
+  <meta name="description" content="Save your own videos and allowed links. Pictures and files stay in this browser." />
   <link rel="icon" href="yaflix-logo.svg" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="loader" class="loader">
+  <div id="loader" class="loader" role="status" aria-live="polite">
     <div class="loader-glow" aria-hidden="true"></div>
-    <img class="loader-logo" src="yaflix-loading.gif" alt="Yaflix loading" onload="document.getElementById('loaderFallback').style.display='none'" onerror="this.onerror=null;this.src='yaflix-logo.svg';this.classList.add('static-logo')" />
-    <div id="loaderFallback" class="loader-fallback">
-      <div class="loader-spin" aria-hidden="true"></div>
-      <p class="loader-text">LOADING...</p>
-    </div>
+    <img class="loader-logo" src="yaflix-loading.gif" alt="Yaflix loading" onerror="this.onerror=null;this.src='yaflix-logo.svg';this.classList.add('static-logo')" />
+    <div class="loader-spin" aria-hidden="true"></div>
+    <p class="loader-text">LOADING</p>
   </div>
-  <div class="bg-glow"></div>
-  <header class="top">
-    <div class="brand">
-      <img class="brand-logo" src="yaflix-logo.svg" alt="Yaflix" />
-      <div>
-        <h1>Yaflix</h1>
-        <p>Keep your own videos and links in one place</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button id="exportBtn" class="ghost" type="button">Export list</button>
-      <label class="ghost file-label">
-        Import list
-        <input id="importInput" type="file" accept="application/json" hidden />
-      </label>
-    </div>
+
+  <header class="nav">
+    <a class="brand" href="#home">
+      <img src="yaflix-logo.svg" alt="Yaflix" />
+    </a>
+    <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">Menu</button>
+    <nav id="siteNav" class="links">
+      <a href="#home">Home</a>
+      <a href="#add">Add</a>
+      <a href="#library">Library</a>
+      <a href="#storage">Storage</a>
+    </nav>
   </header>
 
-  <main>
-    <section class="notice">
-      Only save videos you made or have permission to keep. Do not use this to take videos from other websites without permission.
+  <main id="home">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Personal video shelf</p>
+        <h1>Keep your videos in one place.</h1>
+        <p class="lead">Save a link or a video file from this device. Yaflix shows a picture right away and stores it in this browser.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#add">Add a video</a>
+          <a class="btn ghost" href="#library">Open library</a>
+        </div>
+      </div>
+      <img class="hero-logo" src="yaflix-logo-full.png" alt="" onerror="this.onerror=null;this.src='yaflix-logo.svg'" />
     </section>
 
-    <section class="panel">
-      <h2>Add something to save</h2>
+    <p class="notice">Only save videos you made or have permission to keep. This page does not download movies from other sites.</p>
+
+    <section id="add" class="panel">
+      <div class="section-head">
+        <h2>Add a video</h2>
+        <p>A picture card appears in your library as soon as you save.</p>
+      </div>
       <form id="addForm">
         <div class="grid">
-          <label>
-            Title
-            <input id="titleInput" type="text" maxlength="80" placeholder="My science project video" required />
+          <label>Title
+            <input id="titleInput" type="text" maxlength="80" placeholder="Science fair project" required />
           </label>
-          <label>
-            Tag
+          <label>Tag
             <input id="tagInput" type="text" maxlength="24" placeholder="school, family, ideas" />
           </label>
         </div>
-        <label>
-          Notes
+        <label>Notes
           <textarea id="notesInput" rows="2" maxlength="240" placeholder="What is this video about?"></textarea>
         </label>
 
-        <div class="tabs">
+        <div class="tabs" role="tablist">
           <button type="button" class="tab active" data-mode="link">Save a link</button>
           <button type="button" class="tab" data-mode="file">Save a file from this device</button>
         </div>
 
         <div id="linkFields">
-          <label>
-            Video page or file link
+          <label>Video page or file link
             <input id="urlInput" type="text" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." />
           </label>
-          <label>
-            Picture link (optional)
+          <label>Picture link (optional)
             <input id="thumbInput" type="text" inputmode="url" placeholder="https://example.com/picture.jpg" />
           </label>
         </div>
@@ -78,31 +81,62 @@
           <label class="drop" id="dropZone">
             <input id="fileInput" type="file" accept="video/*" hidden />
             <strong>Choose a video file</strong>
-            <span>or drop it here. Stored only in this browser.</span>
+            <span>or drop it here. It stays in this browser only.</span>
             <em id="fileName">No file chosen</em>
           </label>
         </div>
 
-        <button class="primary" id="saveBtn" type="submit">Save video</button>
-        <p id="saveStatus" class="muted"></p>
+        <button class="btn primary wide" id="saveBtn" type="submit">Save video</button>
+        <p id="saveStatus" class="status" aria-live="polite"></p>
       </form>
     </section>
 
-    <section class="library">
-      <div class="library-head">
-        <h2>Your library</h2>
+    <section id="library" class="panel">
+      <div class="section-head library-head">
+        <div>
+          <h2>Your library</h2>
+          <p id="storageInfo">0 saved</p>
+        </div>
         <div class="filters">
           <input id="searchInput" type="search" placeholder="Search titles and notes" />
-          <select id="filterSelect">
+          <select id="filterSelect" aria-label="Filter">
             <option value="all">All</option>
             <option value="link">Links</option>
             <option value="file">Saved files</option>
+            <option value="fav">Favorites</option>
+          </select>
+          <select id="sortSelect" aria-label="Sort">
+            <option value="new">Newest</option>
+            <option value="old">Oldest</option>
+            <option value="title">Title</option>
           </select>
         </div>
       </div>
-      <p id="storageInfo" class="muted"></p>
       <div id="cards" class="cards"></div>
-      <p id="emptyState" class="empty">Nothing saved yet. Add a link or a video file you own.</p>
+      <p id="emptyState" class="empty">Nothing saved yet. Add a link or a video file you own, then press Save video.</p>
+    </section>
+
+    <section id="storage" class="panel storage">
+      <div class="section-head">
+        <h2>Storage</h2>
+        <p>Lists stay in local storage. Video files and pictures stay in this browser’s IndexedDB.</p>
+      </div>
+      <div class="storage-grid">
+        <article>
+          <h3>On this device</h3>
+          <p id="storageDetail">Nothing stored yet.</p>
+        </article>
+        <article>
+          <h3>Move the list</h3>
+          <div class="row">
+            <button id="exportBtn" class="btn ghost" type="button">Export list</button>
+            <label class="btn ghost file-label">Import list
+              <input id="importInput" type="file" accept="application/json" hidden />
+            </label>
+          </div>
+          <p class="fine">Export saves titles and links, not the video files themselves.</p>
+        </article>
+      </div>
     </section>
   </main>
 
@@ -110,26 +144,20 @@
     <div class="player-box">
       <div class="player-top">
         <h3 id="playerTitle"></h3>
-        <button id="closePlayer" type="button" class="ghost">Close</button>
+        <button id="closePlayer" type="button" class="btn ghost">Close</button>
       </div>
       <video id="player" controls playsinline></video>
       <iframe id="embedPlayer" title="Saved video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" hidden></iframe>
-      <p id="playerHint" class="muted"></p>
+      <p id="playerHint" class="fine"></p>
     </div>
   </dialog>
 
-  <footer>
-    <p>Storage stays on this device. Clearing browser data will erase saved files.</p>
-  </footer>
+  <div id="toast" class="toast" hidden></div>
 
-  <script>
-    window.addEventListener("load", function () {
-      setTimeout(function () {
-        var el = document.getElementById("loader");
-        if (el) el.classList.add("hide");
-      }, 2200);
-    });
-  </script>
+  <footer>
+    <p>Yaflix storage stays on this device. Clearing browser data will erase saved files.</p>
+    <p>Designed for videos you own or are allowed to keep.</p>
+  </footer>
   <script src="app.js"></script>
 </body>
 </html>
