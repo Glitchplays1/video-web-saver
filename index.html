@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yaflix</title>
+  <meta name="description" content="Save video links and your own video files in your browser." />
+  <link rel="icon" href="yaflix-logo.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="loader" class="loader">
+    <div class="loader-glow" aria-hidden="true"></div>
+    <img class="loader-logo" src="yaflix-loading.gif" alt="Yaflix loading" onload="document.getElementById('loaderFallback').style.display='none'" onerror="this.onerror=null;this.src='yaflix-logo.svg';this.classList.add('static-logo')" />
+    <div id="loaderFallback" class="loader-fallback">
+      <div class="loader-spin" aria-hidden="true"></div>
+      <p class="loader-text">LOADING...</p>
+    </div>
+  </div>
+  <div class="bg-glow"></div>
+  <header class="top">
+    <div class="brand">
+      <img class="brand-logo" src="yaflix-logo.svg" alt="Yaflix" />
+      <div>
+        <h1>Yaflix</h1>
+        <p>Keep your own videos and links in one place</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="exportBtn" class="ghost" type="button">Export list</button>
+      <label class="ghost file-label">
+        Import list
+        <input id="importInput" type="file" accept="application/json" hidden />
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      Only save videos you made or have permission to keep. Do not use this to take videos from other websites without permission.
+    </section>
+
+    <section class="panel">
+      <h2>Add something to save</h2>
+      <form id="addForm">
+        <div class="grid">
+          <label>
+            Title
+            <input id="titleInput" type="text" maxlength="80" placeholder="My science project video" required />
+          </label>
+          <label>
+            Tag
+            <input id="tagInput" type="text" maxlength="24" placeholder="school, family, ideas" />
+          </label>
+        </div>
+        <label>
+          Notes
+          <textarea id="notesInput" rows="2" maxlength="240" placeholder="What is this video about?"></textarea>
+        </label>
+
+        <div class="tabs">
+          <button type="button" class="tab active" data-mode="link">Save a link</button>
+          <button type="button" class="tab" data-mode="file">Save a file from this device</button>
+        </div>
+
+        <div id="linkFields">
+          <label>
+            Video page or file link
+            <input id="urlInput" type="text" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." />
+          </label>
+          <label>
+            Picture link (optional)
+            <input id="thumbInput" type="text" inputmode="url" placeholder="https://example.com/picture.jpg" />
+          </label>
+        </div>
+
+        <div id="fileFields" hidden>
+          <label class="drop" id="dropZone">
+            <input id="fileInput" type="file" accept="video/*" hidden />
+            <strong>Choose a video file</strong>
+            <span>or drop it here. Stored only in this browser.</span>
+            <em id="fileName">No file chosen</em>
+          </label>
+        </div>
+
+        <button class="primary" id="saveBtn" type="submit">Save video</button>
+        <p id="saveStatus" class="muted"></p>
+      </form>
+    </section>
+
+    <section class="library">
+      <div class="library-head">
+        <h2>Your library</h2>
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Search titles and notes" />
+          <select id="filterSelect">
+            <option value="all">All</option>
+            <option value="link">Links</option>
+            <option value="file">Saved files</option>
+          </select>
+        </div>
+      </div>
+      <p id="storageInfo" class="muted"></p>
+      <div id="cards" class="cards"></div>
+      <p id="emptyState" class="empty">Nothing saved yet. Add a link or a video file you own.</p>
+    </section>
+  </main>
+
+  <dialog id="playerDialog">
+    <div class="player-box">
+      <div class="player-top">
+        <h3 id="playerTitle"></h3>
+        <button id="closePlayer" type="button" class="ghost">Close</button>
+      </div>
+      <video id="player" controls playsinline></video>
+      <iframe id="embedPlayer" title="Saved video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" hidden></iframe>
+      <p id="playerHint" class="muted"></p>
+    </div>
+  </dialog>
+
+  <footer>
+    <p>Storage stays on this device. Clearing browser data will erase saved files.</p>
+  </footer>
+
+  <script>
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        var el = document.getElementById("loader");
+        if (el) el.classList.add("hide");
+      }, 2200);
+    });
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
