@@ -308,10 +308,12 @@ els.form.addEventListener("submit", async (e) => {
     return;
   }
 
+  const shelfEl = document.getElementById("shelfInput");
   const item = {
     id: uid(),
     title,
     tag: els.tag.value.trim(),
+    shelf: shelfEl ? shelfEl.value : "Other",
     notes: els.notes.value.trim(),
     type: useFile ? "file" : "link",
     url: useFile ? "" : typedUrl,
@@ -359,8 +361,11 @@ function filtered() {
   const q = els.search.value.trim().toLowerCase();
   const kind = els.filter.value;
   const items = library.filter((item) => {
-    const kindOk = kind === "all" || (kind === "fav" ? item.favorite : item.type === kind);
-    const text = (item.title + " " + item.notes + " " + item.tag + " " + item.url + " " + item.fileName).toLowerCase();
+    const shelf = (item.shelf || item.tag || "").toLowerCase();
+    let kindOk = kind === "all" || (kind === "fav" ? item.favorite : item.type === kind);
+    if (kind === "movies") kindOk = shelf.includes("movie");
+    if (kind === "series") kindOk = shelf.includes("series");
+    const text = (item.title + " " + item.notes + " " + item.tag + " " + item.shelf + " " + item.url + " " + item.fileName).toLowerCase();
     return kindOk && text.includes(q);
   });
   if (els.sort.value === "old") items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
@@ -386,21 +391,14 @@ function render(highlightId) {
     const pic = item.thumbUrl || item.poster || posterDataUrl(item.title);
     card.innerHTML =
       '<div class="thumb-wrap" data-play="' + item.id + '">' +
-        '<img alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '" data-fallback="' + escapeAttr(item.poster || "") + '">' +
+        '<img alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '">' +
         '<span class="play-mark">▶</span>' +
       '</div>' +
-      '<div class="card-body">' +
-        '<div><span class="badge">' + (item.type === "file" ? "Saved file" : "Link") + '</span>' +
-        (item.tag ? '<span class="badge">' + escapeHtml(item.tag) + '</span>' : '') + '</div>' +
-        '<h3>' + escapeHtml(item.title) + '</h3>' +
-        '<p>' + escapeHtml(item.notes || item.fileName || item.url || "No notes") + '</p>' +
-        '<p>' + new Date(item.createdAt).toLocaleString() + (item.size ? " · " + prettySize(item.size) : "") + '</p>' +
-        '<div class="row">' +
-          '<button type="button" data-play="' + item.id + '">Watch</button>' +
-          '<button type="button" data-fav="' + item.id + '">' + (item.favorite ? "Favorited" : "Favorite") + '</button>' +
-          (item.url ? '<a class="btn ghost" href="' + escapeAttr(item.url) + '" target="_blank" rel="noopener noreferrer">Open link</a>' : '') +
-          '<button type="button" data-delete="' + item.id + '">Delete</button>' +
-        '</div>' +
+      '<h3>' + escapeHtml(item.title) + '</h3>' +
+      '<div class="card-actions">' +
+        '<button type="button" data-play="' + item.id + '">Watch</button>' +
+        '<button type="button" data-fav="' + item.id + '">' + (item.favorite ? "Saved" : "Favorite") + '</button>' +
+        '<button type="button" data-delete="' + item.id + '">Delete</button>' +
       '</div>';
     const img = card.querySelector("img");
     img.addEventListener("error", () => {
@@ -517,6 +515,14 @@ els.dialog.addEventListener("close", closePlayer);
 els.search.addEventListener("input", () => render());
 els.filter.addEventListener("change", () => render());
 els.sort.addEventListener("change", () => render());
+document.querySelectorAll(".cat").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".cat").forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    els.filter.value = btn.dataset.filter;
+    render();
+  });
+});
 
 els.exportBtn.addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(library, null, 2)], { type: "application/json" });
@@ -540,6 +546,7 @@ els.importInput.addEventListener("change", async () => {
         id: item.id || uid(),
         title: String(item.title).slice(0, 80),
         tag: String(item.tag || "").slice(0, 24),
+        shelf: String(item.shelf || "Other"),
         notes: String(item.notes || "").slice(0, 240),
         type: item.type === "file" ? "file" : "link",
         url: String(item.url || ""),
