@@ -333,6 +333,7 @@ els.form.addEventListener("submit", async (e) => {
     season: showName ? season : 0,
     episode: showName ? episode : 0,
     actors: document.getElementById("actorsInput").value.trim(),
+    minutes: Number(document.getElementById("minutesInput").value) || 0,
     notes: els.notes.value.trim(),
     type: useFile ? "file" : "link",
     url: useFile ? "" : typedUrl,
@@ -636,6 +637,7 @@ els.importInput.addEventListener("change", async () => {
         season: Number(item.season) || 0,
         episode: Number(item.episode) || 0,
         actors: String(item.actors || "").slice(0, 120),
+        minutes: Number(item.minutes) || 0,
         notes: String(item.notes || "").slice(0, 240),
         type: item.type === "file" ? "file" : "link",
         url: String(item.url || ""),
@@ -660,8 +662,8 @@ els.importInput.addEventListener("change", async () => {
 function fillDetail(title, about, actors, pic, meta) {
   document.getElementById("seriesTitle").textContent = title;
   document.getElementById("detailAbout").textContent = about || "No about text yet.";
-  document.getElementById("detailActors").textContent = actors || "No actors added yet.";
-  document.getElementById("detailMeta").textContent = meta;
+  document.getElementById("detailActors").textContent = actors || "Not added";
+  document.getElementById("detailGenres").textContent = meta || "Show";
   const hero = document.getElementById("detailHero");
   hero.style.backgroundImage = pic ? "url('" + pic.replace(/'/g, "") + "')" : "";
   document.getElementById("seriesPanel").classList.remove("hidden");
@@ -689,32 +691,36 @@ function openSeries(key) {
     seasons.get(season).push(ep);
   });
   const resumeEp = eps.find((ep) => getProgress(ep.id) > 2) || eps[0];
-  fillDetail(first.show, first.notes, first.actors, first.thumbUrl || first.poster, seasons.size + " season" + (seasons.size === 1 ? "" : "s"));
+  fillDetail(first.show, first.notes, first.actors, first.thumbUrl || first.poster, first.tag || "Series");
   document.getElementById("detailResume").hidden = getProgress(resumeEp.id) < 2;
   const list = document.getElementById("seriesList");
-  list.innerHTML = '<div class="mb-3 flex flex-wrap gap-2" id="seasonTabs"></div><div id="episodeRows"></div>';
-  const tabs = document.getElementById("seasonTabs");
+  list.innerHTML = '<div class="mb-3 flex items-center justify-between"><h3 class="text-2xl font-semibold">Episodes</h3><select id="seasonPick" class="rounded border border-white/20 bg-[#2a2a2a] px-3 py-2"></select></div><div id="episodeRows"></div>';
+  const pick = document.getElementById("seasonPick");
   const rows = document.getElementById("episodeRows");
   function showSeason(season) {
     rows.innerHTML = "";
-    (seasons.get(season) || []).forEach((ep) => {
+    (seasons.get(Number(season)) || []).forEach((ep) => {
       const row = document.createElement("button");
       row.type = "button";
-      row.className = "mb-2 flex w-full items-center justify-between rounded-lg bg-ink px-3 py-2 text-left";
+      row.className = "mb-2 grid w-full grid-cols-[28px_120px_1fr_auto] items-center gap-3 rounded bg-[#2a2a2a] p-3 text-left";
       row.setAttribute("data-play", ep.id);
-      row.innerHTML = "<span>Episode " + (ep.episode || "?") + " · " + escapeHtml(ep.title) + "</span><span>Play</span>";
+      const pic = ep.thumbUrl || ep.poster || "";
+      row.innerHTML =
+        '<span class="text-2xl text-slate-300">' + (ep.episode || "?") + '</span>' +
+        '<img class="h-16 w-28 rounded object-cover" alt="" src="' + escapeAttr(pic) + '">' +
+        '<span><strong class="block">' + escapeHtml(ep.title) + '</strong><span class="mt-1 block text-sm text-slate-300">' + escapeHtml(ep.notes || "No description yet.") + '</span></span>' +
+        '<span class="text-sm text-slate-300">' + (ep.minutes ? ep.minutes + "m" : "") + '</span>';
       rows.appendChild(row);
     });
   }
   seasons.forEach((unused, season) => {
-    const tab = document.createElement("button");
-    tab.type = "button";
-    tab.className = "rounded-full bg-ink px-3 py-1 text-sm";
-    tab.textContent = "Season " + season;
-    tab.addEventListener("click", () => showSeason(season));
-    tabs.appendChild(tab);
+    const option = document.createElement("option");
+    option.value = season;
+    option.textContent = "Season " + season;
+    pick.appendChild(option);
   });
-  showSeason(eps[0].season || 1);
+  pick.addEventListener("change", () => showSeason(pick.value));
+  showSeason(pick.value);
 }
 
 document.getElementById("detailPlay").addEventListener("click", async () => {
