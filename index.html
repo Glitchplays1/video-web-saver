@@ -23,6 +23,10 @@
   <style>
     .cat.active { color: #bfdbfe; }
     .tab.active { background: #1d4ed8; }
+    body.light { background: #f8fafc !important; color: #0f172a; }
+    body.light .bg-bar, body.light .bg-nav, body.light header, body.light footer { background: #e2e8f0 !important; color: #0f172a; }
+    body.light .text-slate-300, body.light .text-slate-400, body.light .text-white { color: #1e293b !important; }
+    body.light input, body.light select, body.light textarea { background: #fff !important; color: #0f172a; }
   </style>
 </head>
 <body class="min-h-screen bg-ink font-sans text-white">
@@ -58,6 +62,10 @@
       <input id="searchInput" class="w-36 bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search..." />
     </form>
     <button id="openAdd" class="rounded-full bg-blue-500 px-4 py-2 font-semibold" type="button">Add video</button>
+    <label class="flex items-center gap-2 text-sm font-medium">
+      <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
+      Dark
+    </label>
   </header>
 
   <div id="alertBar" class="mx-auto mt-5 flex w-[min(360px,calc(100%-2rem))] items-center gap-2 rounded-xl bg-bar px-3 py-1.5">
@@ -145,6 +153,10 @@
 
   <section id="settings" data-view-panel="settings" class="mx-auto my-6 hidden w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
     <h2 class="text-2xl font-bold">Background settings</h2>
+    <label class="mt-4 flex items-center gap-3 text-sm">
+      <input id="darkMode" type="checkbox" class="h-5 w-5" checked />
+      Dark mode
+    </label>
     <p class="mt-1 text-slate-300">Pick a color, or turn on color changing. Your choice stays in this browser.</p>
     <div id="colorSwatches" class="mt-4 flex flex-wrap gap-3">
       <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#0b1220" style="background:#0b1220" aria-label="Night"></button>
@@ -235,9 +247,28 @@
     }
     var savedBg = localStorage.getItem("yaflix-bg") || "#0b1220";
     var shiftOn = localStorage.getItem("yaflix-shift") === "on";
+    var darkOn = localStorage.getItem("yaflix-dark") !== "off";
+    function setDark(on) {
+      darkOn = on;
+      document.body.classList.toggle("light", !on);
+      document.getElementById("darkSwitch").checked = on;
+      document.getElementById("darkMode").checked = on;
+      localStorage.setItem("yaflix-dark", on ? "on" : "off");
+      if (!on) {
+        stopShift();
+        document.body.style.backgroundColor = "#f8fafc";
+      } else if (localStorage.getItem("yaflix-shift") === "on") {
+        startShift();
+      } else {
+        applyBg(localStorage.getItem("yaflix-bg") || "#0b1220");
+      }
+    }
     applyBg(savedBg);
     document.getElementById("colorShift").checked = shiftOn;
-    if (shiftOn) startShift();
+    setDark(darkOn);
+    if (darkOn && shiftOn) startShift();
+    document.getElementById("darkSwitch").addEventListener("change", function (e) { setDark(e.target.checked); });
+    document.getElementById("darkMode").addEventListener("change", function (e) { setDark(e.target.checked); });
     document.getElementById("colorSwatches").addEventListener("click", function (e) {
       var btn = e.target.closest("[data-color]");
       if (!btn) return;
