@@ -285,6 +285,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
 els.file.addEventListener("change", () => {
   pendingFile = els.file.files[0] || null;
   els.fileName.textContent = pendingFile ? pendingFile.name : "No file chosen";
+  if (pendingFile) setMode("file");
 });
 
 ["dragenter", "dragover"].forEach((evt) => {
@@ -306,74 +307,90 @@ els.drop.addEventListener("drop", (e) => {
 els.form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const title = els.title.value.trim();
-  if (!title) return;
+  if (!title) {
+    toast("Add a title first.");
+    els.saveStatus.textContent = "Add a title first.";
+    return;
+  }
 
   const typedUrl = cleanUrl(els.url.value);
   const extraThumb = cleanUrl(els.thumb.value);
-  const useFile = mode === "file";
-  if (useFile && !pendingFile) {
+  const pickedFile = pendingFile || (els.file.files && els.file.files[0]) || null;
+  const useFile = mode === "file" || Boolean(pickedFile);
+  if (useFile && !pickedFile) {
     toast("Choose a video file first.");
+    els.saveStatus.textContent = "Choose a video file first.";
     return;
   }
   if (!useFile && !typedUrl) {
-    toast("Paste a video link first.");
+    toast("Paste a video link, or choose a file.");
+    els.saveStatus.textContent = "Paste a video link, or choose a file.";
     return;
   }
 
-  const shelfEl = document.getElementById("shelfInput");
-  const showName = document.getElementById("showInput").value.trim();
-  const season = Number(document.getElementById("seasonInput").value) || 1;
-  const episode = Number(document.getElementById("episodeInput").value) || 1;
-  const item = {
-    id: uid(),
-    title,
-    tag: els.tag.value.trim(),
-    shelf: shelfEl ? shelfEl.value : "Other",
-    show: showName,
-    season: showName ? season : 0,
-    episode: showName ? episode : 0,
-    actors: document.getElementById("actorsInput").value.trim(),
-    minutes: Number(document.getElementById("minutesInput").value) || 0,
-    notes: els.notes.value.trim(),
-    type: useFile ? "file" : "link",
-    url: useFile ? "" : typedUrl,
-    thumbUrl: useFile ? "" : thumbnailFromLink(typedUrl, extraThumb),
-    poster: posterDataUrl(title),
-    fileName: pendingFile ? pendingFile.name : "",
-    size: pendingFile ? pendingFile.size : 0,
-    favorite: false,
-    createdAt: new Date().toISOString(),
-  };
+  try {
+    const shelfEl = document.getElementById("shelfInput");
+    const showName = (document.getElementById("showInput").value || "").trim();
+    const season = Number(document.getElementById("seasonInput").value) || 1;
+    const episode = Number(document.getElementById("episodeInput").value) || 1;
+    const item = {
+      id: uid(),
+      title,
+      tag: els.tag.value.trim(),
+      shelf: shelfEl ? shelfEl.value : "Other",
+      show: shelfEl && shelfEl.value === "Series" ? showName : "",
+      season: shelfEl && shelfEl.value === "Series" ? season : 0,
+      episode: shelfEl && shelfEl.value === "Series" ? episode : 0,
+      actors: document.getElementById("actorsInput").value.trim(),
+      minutes: Number(document.getElementById("minutesInput").value) || 0,
+      notes: els.notes.value.trim(),
+      type: useFile ? "file" : "link",
+      url: useFile ? "" : typedUrl,
+      thumbUrl: useFile ? "" : thumbnailFromLink(typedUrl, extraThumb),
+      poster: posterDataUrl(showName || title),
+      fileName: pickedFile ? pickedFile.name : "",
+      size: pickedFile ? pickedFile.size : 0,
+      favorite: false,
+      createdAt: new Date().toISOString(),
+    };
 
-  const fileToStore = pendingFile;
-  library.unshift(item);
-  saveMeta();
-  els.search.value = "";
-  els.filter.value = "all";
-  render(item.id);
-  toast("Saved. Your video is in the library.");
-  els.saveStatus.textContent = "Saved! The card is in Your library.";
-  if (window.showView) window.showView("library");
+    library.unshift(item);
+    saveMeta();
+    els.search.value = "";
+    els.filter.value = "all";
+    document.querySelectorAll(".cat").forEach((b) => b.classList.remove("active"));
+    const allBtn = document.querySelector('.cat[data-filter="all"]');
+    if (allBtn) allBtn.classList.add("active");
+    render(item.id);
+    toast("Saved. Your video is in the library.");
+    els.saveStatus.textContent = "Saved! Look in the library.";
+    if (window.showView) window.showView("library");
 
-  els.form.reset();
-  pendingFile = null;
-  els.fileName.textContent = "No file chosen";
-  setMode("link");
+    els.form.reset();
+    pendingFile = null;
+    els.fileName.textContent = "No file chosen";
+    setMode("link");
+    document.getElementById("seriesFields").hidden = true;
 
-  if (fileToStore) {
-    try {
-      await putFile(item.id, fileToStore);
-      const frame = await captureFrame(fileToStore);
-      if (frame) {
-        item.thumbUrl = frame;
-        await putThumb(item.id, frame);
-        saveMeta();
-        render(item.id);
+    if (pickedFile) {
+      try {
+        await putFile(item.id, pickedFile);
+        const frame = await captureFrame(pickedFile);
+        if (frame) {
+          item.thumbUrl = frame;
+          await putThumb(item.id, frame);
+          saveMeta();
+          render(item.id);
+        }
+      } catch (err) {
+        console.error(err);
+        toast("The card is saved. The file itself could not be stored. Try a smaller file.");
       }
-    } catch (err) {
-      console.error(err);
-      toast("The card is saved. The file itself could not be stored. Try a smaller file.");
     }
+  } catch (err) {
+    console.error(err);
+    toast("Could not add that video. Try again.");
+    els.saveStatus.textContent = "Could not add that video. Try again.";
   }
 });
 
@@ -788,7 +805,7 @@ document.getElementById("seriesList").addEventListener("click", async (e) => {
   }
 });
 document.getElementById("shelfInput").addEventListener("change", (e) => {
-  document.getElementById("seriesFields").classList.toggle("hidden", e.target.value !== "Series");
+  document.getElementById("seriesFields").hidden = e.target.value !== "Series";
 });
 
 let previewTimer = null;

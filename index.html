@@ -118,7 +118,7 @@
           </select>
         </label>
       </div>
-      <div id="seriesFields" class="mt-3 hidden grid gap-3 md:grid-cols-3">
+      <div id="seriesFields" hidden class="mt-3 grid gap-3 md:grid-cols-3">
         <label class="text-sm text-slate-300">Show name
           <input id="showInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="80" placeholder="Same name for every episode" />
         </label>
@@ -129,7 +129,7 @@
           <input id="episodeInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="number" min="1" value="1" />
         </label>
         <label class="text-sm text-slate-300">Minutes
-          <input id="minutesInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="number" min="1" placeholder="22" />
+          <input id="minutesInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="number" placeholder="22" />
         </label>
       </div>
       <label class="mt-3 block text-sm text-slate-300">Tag
@@ -155,7 +155,7 @@
       </div>
       <div id="fileFields" hidden>
         <label id="dropZone" class="mt-3 block cursor-pointer rounded-xl border border-dashed border-blue-300 p-5 text-center">
-          <input id="fileInput" type="file" accept="video/*" hidden />
+          <input id="fileInput" type="file" accept="video/*" class="hidden" />
           <strong>Choose a video file</strong>
           <span class="mt-1 block text-slate-300">or drop it here. Stored only in this browser.</span>
           <em id="fileName" class="mt-1 block">No file chosen</em>
