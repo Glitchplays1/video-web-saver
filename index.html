@@ -37,6 +37,7 @@
     <a class="view-link hover:text-blue-200" href="#library" data-view="library">Library</a>
     <a class="view-link hover:text-blue-200" href="#add" data-view="add">Add</a>
     <a class="view-link hover:text-blue-200" href="#storage" data-view="storage">Storage</a>
+    <a class="view-link hover:text-blue-200" href="#settings" data-view="settings">Settings</a>
     <a class="view-link hover:text-blue-200" href="#about" data-view="about">About</a>
   </div>
 
@@ -50,6 +51,7 @@
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="file">Files</button>
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="fav">Favorites</button>
       <button type="button" class="view-link rounded-lg px-3 py-2 hover:text-blue-200" data-view="add">Add</button>
+      <button type="button" class="view-link rounded-lg px-3 py-2 hover:text-blue-200" data-view="settings">Settings</button>
     </nav>
     <form id="navSearch" class="hidden items-center rounded-lg bg-bar px-3 md:flex" role="search">
       <span class="text-slate-400">⌕</span>
@@ -141,6 +143,29 @@
     </div>
   </section>
 
+  <section id="settings" data-view-panel="settings" class="mx-auto my-6 hidden w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
+    <h2 class="text-2xl font-bold">Background settings</h2>
+    <p class="mt-1 text-slate-300">Pick a color, or turn on color changing. Your choice stays in this browser.</p>
+    <div id="colorSwatches" class="mt-4 flex flex-wrap gap-3">
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#0b1220" style="background:#0b1220" aria-label="Night"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#1e1b4b" style="background:#1e1b4b" aria-label="Indigo"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#3b0764" style="background:#3b0764" aria-label="Purple"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#7f1d1d" style="background:#7f1d1d" aria-label="Red"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#1e3a8a" style="background:#1e3a8a" aria-label="Blue"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#064e3b" style="background:#064e3b" aria-label="Green"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#78350f" style="background:#78350f" aria-label="Amber"></button>
+      <button type="button" class="h-12 w-12 rounded-full border-2 border-white/40" data-color="#111827" style="background:#111827" aria-label="Slate"></button>
+    </div>
+    <label class="mt-4 block text-sm text-slate-300">Custom color
+      <input id="bgColor" class="mt-2 h-12 w-24 cursor-pointer rounded-lg border-0 bg-transparent" type="color" value="#0b1220" />
+    </label>
+    <label class="mt-4 flex items-center gap-3 text-sm">
+      <input id="colorShift" type="checkbox" class="h-5 w-5" />
+      Slowly change the background color
+    </label>
+    <button id="resetBg" class="mt-4 rounded-full border border-slate-500 px-4 py-2" type="button">Reset background</button>
+  </section>
+
   <section id="about" data-view-panel="about" class="mx-auto my-6 hidden w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
     <h2 class="text-2xl font-bold">About Yaflix</h2>
     <p class="mt-1 text-slate-300">Built with HTML, Tailwind CSS, and JavaScript. Hosted on Netlify. It keeps videos you own or are allowed to save. It does not download movies from other websites.</p>
@@ -187,6 +212,57 @@
       if (name === "add") document.getElementById("titleInput").focus();
     };
     if (location.hash === "#add") showView("add");
+    if (location.hash === "#settings") showView("settings");
+    var bgTimer = null;
+    var hue = 220;
+    function applyBg(color) {
+      document.body.style.backgroundColor = color;
+      localStorage.setItem("yaflix-bg", color);
+      var picker = document.getElementById("bgColor");
+      if (picker && color.charAt(0) === "#") picker.value = color;
+    }
+    function startShift() {
+      if (bgTimer) clearInterval(bgTimer);
+      bgTimer = setInterval(function () {
+        hue = (hue + 8) % 360;
+        var color = "hsl(" + hue + " 55% 16%)";
+        document.body.style.backgroundColor = color;
+      }, 1200);
+    }
+    function stopShift() {
+      if (bgTimer) clearInterval(bgTimer);
+      bgTimer = null;
+    }
+    var savedBg = localStorage.getItem("yaflix-bg") || "#0b1220";
+    var shiftOn = localStorage.getItem("yaflix-shift") === "on";
+    applyBg(savedBg);
+    document.getElementById("colorShift").checked = shiftOn;
+    if (shiftOn) startShift();
+    document.getElementById("colorSwatches").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-color]");
+      if (!btn) return;
+      stopShift();
+      document.getElementById("colorShift").checked = false;
+      localStorage.setItem("yaflix-shift", "off");
+      applyBg(btn.getAttribute("data-color"));
+    });
+    document.getElementById("bgColor").addEventListener("input", function (e) {
+      stopShift();
+      document.getElementById("colorShift").checked = false;
+      localStorage.setItem("yaflix-shift", "off");
+      applyBg(e.target.value);
+    });
+    document.getElementById("colorShift").addEventListener("change", function (e) {
+      localStorage.setItem("yaflix-shift", e.target.checked ? "on" : "off");
+      if (e.target.checked) startShift();
+      else applyBg(localStorage.getItem("yaflix-bg") || "#0b1220");
+    });
+    document.getElementById("resetBg").addEventListener("click", function () {
+      stopShift();
+      document.getElementById("colorShift").checked = false;
+      localStorage.setItem("yaflix-shift", "off");
+      applyBg("#0b1220");
+    });
     document.getElementById("navSearch").addEventListener("submit", function (e) { e.preventDefault(); });
     window.addEventListener("load", function () {
       setTimeout(function () {
