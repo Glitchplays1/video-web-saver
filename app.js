@@ -332,6 +332,7 @@ els.form.addEventListener("submit", async (e) => {
     show: showName,
     season: showName ? season : 0,
     episode: showName ? episode : 0,
+    actors: document.getElementById("actorsInput").value.trim(),
     notes: els.notes.value.trim(),
     type: useFile ? "file" : "link",
     url: useFile ? "" : typedUrl,
@@ -438,7 +439,7 @@ function render(highlightId) {
     card.dataset.id = item.id;
     const pic = item.thumbUrl || item.poster || posterDataUrl(item.title);
     card.innerHTML =
-      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-play="' + item.id + '">' +
+      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-info="' + item.id + '">' +
         '<img class="h-full w-full object-cover" alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '">' +
         '<span class="absolute bottom-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-xs">▶</span>' +
       '</div>' +
@@ -476,10 +477,12 @@ function escapeHtml(value) {
 }
 function escapeAttr(value) { return escapeHtml(value); }
 
-async function openSaved(item) {
+async function openSaved(item, resume) {
   if (!item) return;
   closeMedia();
+  els.player.dataset.itemId = item.id;
   els.playerTitle.textContent = item.title;
+  const startAt = resume ? getProgress(item.id) : 0;
   const yt = youtubeId(item.url || "");
   if (item.type === "file") {
     const file = await getFile(item.id);
@@ -490,16 +493,19 @@ async function openSaved(item) {
     els.player.hidden = false;
     els.embed.hidden = true;
     els.player.src = URL.createObjectURL(file);
-    els.playerHint.textContent = item.fileName || "Playing from this browser";
+    els.playerHint.textContent = startAt ? "Resuming in this browser" : (item.fileName || "Playing from this browser");
     els.dialog.showModal();
+    els.player.addEventListener("loadedmetadata", () => {
+      if (startAt > 1 && startAt < (els.player.duration || startAt + 1)) els.player.currentTime = startAt;
+    }, { once: true });
     els.player.play().catch(() => {});
     return;
   }
   if (yt) {
     els.player.hidden = true;
     els.embed.hidden = false;
-    els.embed.src = "https://www.youtube.com/embed/" + encodeURIComponent(yt) + "?autoplay=1";
-    els.playerHint.textContent = "Watching the saved YouTube link";
+    els.embed.src = "https://www.youtube.com/embed/" + encodeURIComponent(yt) + "?autoplay=1" + (startAt ? "&start=" + Math.floor(startAt) : "");
+    els.playerHint.textContent = startAt ? "Resuming the saved YouTube link" : "Watching the saved YouTube link";
     els.dialog.showModal();
     return;
   }
@@ -509,11 +515,30 @@ async function openSaved(item) {
     els.player.src = item.url;
     els.playerHint.textContent = item.url;
     els.dialog.showModal();
+    els.player.addEventListener("loadedmetadata", () => {
+      if (startAt > 1) els.player.currentTime = startAt;
+    }, { once: true });
     els.player.play().catch(() => {});
     return;
   }
   if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
 }
+
+function progressAll() {
+  try { return JSON.parse(localStorage.getItem("yaflix-progress") || "{}"); } catch { return {}; }
+}
+function getProgress(id) {
+  return Number(progressAll()[id]) || 0;
+}
+function setProgress(id, time) {
+  const all = progressAll();
+  all[id] = Math.floor(time);
+  localStorage.setItem("yaflix-progress", JSON.stringify(all));
+}
+els.player.addEventListener("timeupdate", () => {
+  const itemId = els.player.dataset.itemId;
+  if (itemId && els.player.currentTime > 1) setProgress(itemId, els.player.currentTime);
+});
 
 function closeMedia() {
   els.player.pause();
@@ -529,9 +554,15 @@ function closeMedia() {
 els.cards.addEventListener("click", async (e) => {
   if (e.target.closest("a")) return;
   const showEl = e.target.closest("[data-show]");
+  const infoEl = e.target.closest("[data-info]");
   const play = e.target.closest("[data-play]");
   const del = e.target.closest("[data-delete]");
   const fav = e.target.closest("[data-fav]");
+  if (infoEl && !play && !del && !fav) {
+    const item = library.find((i) => i.id === infoEl.getAttribute("data-info"));
+    openTitle(item);
+    return;
+  }
   if (showEl && !play && !del && !fav) {
     openSeries(showEl.getAttribute("data-show"));
     return;
@@ -604,6 +635,7 @@ els.importInput.addEventListener("change", async () => {
         show: String(item.show || ""),
         season: Number(item.season) || 0,
         episode: Number(item.episode) || 0,
+        actors: String(item.actors || "").slice(0, 120),
         notes: String(item.notes || "").slice(0, 240),
         type: item.type === "file" ? "file" : "link",
         url: String(item.url || ""),
@@ -625,37 +657,81 @@ els.importInput.addEventListener("change", async () => {
   }
 });
 
+function fillDetail(title, about, actors, pic, meta) {
+  document.getElementById("seriesTitle").textContent = title;
+  document.getElementById("detailAbout").textContent = about || "No about text yet.";
+  document.getElementById("detailActors").textContent = actors || "No actors added yet.";
+  document.getElementById("detailMeta").textContent = meta;
+  const hero = document.getElementById("detailHero");
+  hero.style.backgroundImage = pic ? "url('" + pic.replace(/'/g, "") + "')" : "";
+  document.getElementById("seriesPanel").classList.remove("hidden");
+  document.getElementById("seriesPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openTitle(item) {
+  if (!item) return;
+  window.currentDetail = { type: "movie", item };
+  fillDetail(item.title, item.notes, item.actors, item.thumbUrl || item.poster, item.shelf || "Movie");
+  document.getElementById("seriesList").innerHTML = "";
+  document.getElementById("detailResume").hidden = getProgress(item.id) < 2;
+}
+
 function openSeries(key) {
   const eps = library.filter((item) => (item.show || "").toLowerCase() === key);
   eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
-  const panel = document.getElementById("seriesPanel");
-  const list = document.getElementById("seriesList");
-  document.getElementById("seriesTitle").textContent = eps[0] ? eps[0].show : "Series";
+  if (!eps.length) return;
+  window.currentDetail = { type: "show", key, eps };
+  const first = eps[0];
   const seasons = new Map();
   eps.forEach((ep) => {
     const season = ep.season || 1;
     if (!seasons.has(season)) seasons.set(season, []);
     seasons.get(season).push(ep);
   });
-  list.innerHTML = "";
-  seasons.forEach((rows, season) => {
-    const block = document.createElement("div");
-    block.className = "mb-4";
-    block.innerHTML = '<h3 class="mb-2 font-semibold">Season ' + season + '</h3>';
-    rows.forEach((ep) => {
-      const row = document.createElement("div");
-      row.className = "mb-2 flex items-center justify-between gap-2 rounded-lg bg-ink px-3 py-2";
-      row.innerHTML =
-        '<span>E' + (ep.episode || "?") + ' · ' + escapeHtml(ep.title) + '</span>' +
-        '<span class="flex gap-2"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-play="' + ep.id + '">Watch</button>' +
-        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-delete="' + ep.id + '">Delete</button></span>';
-      block.appendChild(row);
+  const resumeEp = eps.find((ep) => getProgress(ep.id) > 2) || eps[0];
+  fillDetail(first.show, first.notes, first.actors, first.thumbUrl || first.poster, seasons.size + " season" + (seasons.size === 1 ? "" : "s"));
+  document.getElementById("detailResume").hidden = getProgress(resumeEp.id) < 2;
+  const list = document.getElementById("seriesList");
+  list.innerHTML = '<div class="mb-3 flex flex-wrap gap-2" id="seasonTabs"></div><div id="episodeRows"></div>';
+  const tabs = document.getElementById("seasonTabs");
+  const rows = document.getElementById("episodeRows");
+  function showSeason(season) {
+    rows.innerHTML = "";
+    (seasons.get(season) || []).forEach((ep) => {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "mb-2 flex w-full items-center justify-between rounded-lg bg-ink px-3 py-2 text-left";
+      row.setAttribute("data-play", ep.id);
+      row.innerHTML = "<span>Episode " + (ep.episode || "?") + " · " + escapeHtml(ep.title) + "</span><span>Play</span>";
+      rows.appendChild(row);
     });
-    list.appendChild(block);
+  }
+  seasons.forEach((unused, season) => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = "rounded-full bg-ink px-3 py-1 text-sm";
+    tab.textContent = "Season " + season;
+    tab.addEventListener("click", () => showSeason(season));
+    tabs.appendChild(tab);
   });
-  panel.classList.remove("hidden");
-  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  showSeason(eps[0].season || 1);
 }
+
+document.getElementById("detailPlay").addEventListener("click", async () => {
+  const detail = window.currentDetail;
+  if (!detail) return;
+  if (detail.type === "movie") await openSaved(detail.item, false);
+  else await openSaved(detail.eps[0], false);
+});
+document.getElementById("detailResume").addEventListener("click", async () => {
+  const detail = window.currentDetail;
+  if (!detail) return;
+  if (detail.type === "movie") await openSaved(detail.item, true);
+  else {
+    const ep = detail.eps.find((item) => getProgress(item.id) > 2) || detail.eps[0];
+    await openSaved(ep, true);
+  }
+});
 
 document.getElementById("closeSeries").addEventListener("click", () => {
   document.getElementById("seriesPanel").classList.add("hidden");
