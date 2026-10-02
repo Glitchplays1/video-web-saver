@@ -476,7 +476,27 @@ function escapeHtml(value) {
     .replace(/>/g, "\u0026gt;")
     .replace(/"/g, "\u0026quot;");
 }
-function escapeAttr(value) { return escapeHtml(value); }
+function matchScore(title) {
+  let hash = 0;
+  for (const ch of String(title || "Yaflix")) hash = (hash * 33 + ch.charCodeAt(0)) >>> 0;
+  return 70 + (hash % 30);
+}
+function previewsOn() {
+  return localStorage.getItem("yaflix-preview") !== "off";
+}
+function autoplayOn() {
+  return localStorage.getItem("yaflix-autoplay") !== "off";
+}
+function isPhone() {
+  return window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 760;
+}
+function nextEpisode(item) {
+  if (!item || !item.show) return null;
+  const eps = library.filter((ep) => (ep.show || "").toLowerCase() === item.show.toLowerCase());
+  eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
+  const index = eps.findIndex((ep) => ep.id === item.id);
+  return index >= 0 ? eps[index + 1] || null : null;
+}
 
 async function openSaved(item, resume) {
   if (!item) return;
@@ -561,11 +581,16 @@ els.cards.addEventListener("click", async (e) => {
   const fav = e.target.closest("[data-fav]");
   if (infoEl && !play && !del && !fav) {
     const item = library.find((i) => i.id === infoEl.getAttribute("data-info"));
-    openTitle(item);
+    if (isPhone()) await openSaved(item, getProgress(item.id) > 2);
+    else openTitle(item);
     return;
   }
   if (showEl && !play && !del && !fav) {
-    openSeries(showEl.getAttribute("data-show"));
+    if (isPhone()) {
+      const eps = library.filter((item) => (item.show || "").toLowerCase() === showEl.getAttribute("data-show"));
+      eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
+      if (eps[0]) await openSaved(eps[0], getProgress(eps[0].id) > 2);
+    } else openSeries(showEl.getAttribute("data-show"));
     return;
   }
   if (fav) {
@@ -664,6 +689,7 @@ function fillDetail(title, about, actors, pic, meta) {
   document.getElementById("detailAbout").textContent = about || "No about text yet.";
   document.getElementById("detailActors").textContent = actors || "Not added";
   document.getElementById("detailGenres").textContent = meta || "Show";
+  document.getElementById("detailMeta").textContent = matchScore(title) + "% Match";
   const hero = document.getElementById("detailHero");
   hero.style.backgroundImage = pic ? "url('" + pic.replace(/'/g, "") + "')" : "";
   document.getElementById("seriesPanel").classList.remove("hidden");
@@ -762,6 +788,115 @@ document.getElementById("seriesList").addEventListener("click", async (e) => {
 });
 document.getElementById("shelfInput").addEventListener("change", (e) => {
   document.getElementById("seriesFields").classList.toggle("hidden", e.target.value !== "Series");
+});
+
+let previewTimer = null;
+let previewVideo = null;
+function stopPreview() {
+  if (previewTimer) clearTimeout(previewTimer);
+  previewTimer = null;
+  if (previewVideo) {
+    previewVideo.pause();
+    previewVideo.remove();
+    previewVideo = null;
+  }
+}
+els.cards.addEventListener("mouseover", (e) => {
+  if (!previewsOn() || isPhone()) return;
+  const card = e.target.closest("article");
+  if (!card || card.dataset.previewing) return;
+  const info = card.querySelector("[data-info]");
+  const show = card.querySelector("[data-show]");
+  const item = info ? library.find((i) => i.id === info.getAttribute("data-info")) : null;
+  const showItem = show ? library.find((i) => (i.show || "").toLowerCase() === show.getAttribute("data-show") && i.type === "file") : null;
+  const target = item && item.type === "file" ? item : showItem;
+  if (!target) return;
+  stopPreview();
+  previewTimer = setTimeout(async () => {
+    const file = await getFile(target.id);
+    if (!file || !previewsOn()) return;
+    const wrap = card.querySelector(".relative");
+    if (!wrap) return;
+    previewVideo = document.createElement("video");
+    previewVideo.className = "absolute inset-0 h-full w-full object-cover";
+    previewVideo.muted = true;
+    previewVideo.playsInline = true;
+    previewVideo.src = URL.createObjectURL(file);
+    wrap.appendChild(previewVideo);
+    previewVideo.play().catch(() => {});
+    card.dataset.previewing = "1";
+  }, 700);
+});
+els.cards.addEventListener("mouseout", (e) => {
+  const card = e.target.closest("article");
+  if (card) delete card.dataset.previewing;
+  stopPreview();
+});
+
+let nextTimer = null;
+function clearNext() {
+  if (nextTimer) clearInterval(nextTimer);
+  nextTimer = null;
+  const banner = document.getElementById("nextBanner");
+  if (banner) banner.classList.add("hidden");
+  if (banner) banner.classList.remove("grid");
+}
+function queueNext(item) {
+  clearNext();
+  const next = nextEpisode(item);
+  if (!next || !autoplayOn()) return;
+  const banner = document.getElementById("nextBanner");
+  const count = document.getElementById("nextCount");
+  let left = 5;
+  count.textContent = left;
+  banner.classList.remove("hidden");
+  banner.classList.add("grid");
+  nextTimer = setInterval(() => {
+    left -= 1;
+    count.textContent = left;
+    if (left <= 0) {
+      clearNext();
+      openSaved(next, false);
+    }
+  }, 1000);
+  document.getElementById("playNextNow").onclick = () => { clearNext(); openSaved(next, false); };
+  document.getElementById("cancelNext").onclick = clearNext;
+}
+els.player.addEventListener("ended", () => {
+  const item = library.find((i) => i.id === els.player.dataset.itemId);
+  queueNext(item);
+});
+els.player.addEventListener("timeupdate", () => {
+  const bar = document.getElementById("progressBar");
+  if (els.player.duration) bar.value = Math.round((els.player.currentTime / els.player.duration) * 100);
+});
+document.getElementById("playPause").addEventListener("click", () => {
+  if (els.player.paused) { els.player.play(); document.getElementById("playPause").textContent = "Pause"; }
+  else { els.player.pause(); document.getElementById("playPause").textContent = "Play"; }
+});
+document.getElementById("back10").addEventListener("click", () => { els.player.currentTime = Math.max(0, els.player.currentTime - 10); });
+document.getElementById("fwd10").addEventListener("click", () => { els.player.currentTime = Math.min(els.player.duration || 0, els.player.currentTime + 10); });
+document.getElementById("volumeBar").addEventListener("input", (e) => { els.player.volume = Number(e.target.value); });
+document.getElementById("progressBar").addEventListener("input", (e) => {
+  if (els.player.duration) els.player.currentTime = (Number(e.target.value) / 100) * els.player.duration;
+});
+document.getElementById("captionBtn").addEventListener("click", () => {
+  const tracks = els.player.textTracks;
+  if (!tracks || !tracks.length) { toast("This video has no subtitle track."); return; }
+  tracks[0].mode = tracks[0].mode === "showing" ? "hidden" : "showing";
+});
+document.getElementById("playerWrap").addEventListener("mousemove", () => {
+  document.getElementById("playerControls").classList.remove("hidden");
+});
+document.getElementById("playerControls").addEventListener("click", (e) => e.stopPropagation());
+document.getElementById("previewToggle").checked = previewsOn();
+document.getElementById("autoplayToggle").checked = autoplayOn();
+document.getElementById("previewToggle").addEventListener("change", (e) => {
+  localStorage.setItem("yaflix-preview", e.target.checked ? "on" : "off");
+  if (!e.target.checked) stopPreview();
+});
+document.getElementById("autoplayToggle").addEventListener("change", (e) => {
+  localStorage.setItem("yaflix-autoplay", e.target.checked ? "on" : "off");
 });
 
 render();
