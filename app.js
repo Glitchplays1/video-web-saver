@@ -321,11 +321,17 @@ els.form.addEventListener("submit", async (e) => {
   }
 
   const shelfEl = document.getElementById("shelfInput");
+  const showName = document.getElementById("showInput").value.trim();
+  const season = Number(document.getElementById("seasonInput").value) || 1;
+  const episode = Number(document.getElementById("episodeInput").value) || 1;
   const item = {
     id: uid(),
     title,
     tag: els.tag.value.trim(),
     shelf: shelfEl ? shelfEl.value : "Other",
+    show: showName,
+    season: showName ? season : 0,
+    episode: showName ? episode : 0,
     notes: els.notes.value.trim(),
     type: useFile ? "file" : "link",
     url: useFile ? "" : typedUrl,
@@ -377,7 +383,7 @@ function filtered() {
     let kindOk = kind === "all" || (kind === "fav" ? item.favorite : item.type === kind);
     if (kind === "movies") kindOk = shelf.includes("movie");
     if (kind === "series") kindOk = shelf.includes("series");
-    const text = (item.title + " " + item.notes + " " + item.tag + " " + item.shelf + " " + item.url + " " + item.fileName).toLowerCase();
+    const text = (item.title + " " + item.show + " " + item.notes + " " + item.tag + " " + item.shelf + " " + item.url + " " + item.fileName).toLowerCase();
     return kindOk && text.includes(q);
   });
   if (els.sort.value === "old") items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
@@ -396,7 +402,37 @@ function render(highlightId) {
   els.storage.textContent = summary;
   els.storageDetail.textContent = summary + " in this browser. Clearing site data removes files.";
 
+  const grouped = new Map();
+  const loose = [];
   items.forEach((item) => {
+    if (item.show) {
+      const key = item.show.toLowerCase();
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key).push(item);
+    } else {
+      loose.push(item);
+    }
+  });
+
+  grouped.forEach((eps, key) => {
+    eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
+    const first = eps[0];
+    const seasons = new Set(eps.map((ep) => ep.season || 1)).size;
+    const card = document.createElement("article");
+    card.className = "rounded-xl border border-dashed border-blue-300 p-2";
+    const pic = first.thumbUrl || first.poster || posterDataUrl(first.show);
+    card.innerHTML =
+      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-show="' + escapeAttr(key) + '">' +
+        '<img class="h-full w-full object-cover" alt="' + escapeHtml(first.show) + '" src="' + escapeAttr(pic) + '">' +
+        '<span class="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-xs">' + eps.length + ' eps</span>' +
+      '</div>' +
+      '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(first.show) + '</h3>' +
+      '<p class="mb-2 text-center text-xs text-slate-300">' + seasons + ' season' + (seasons === 1 ? '' : 's') + '</p>' +
+      '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeAttr(key) + '">Open series</button></div>';
+    els.cards.appendChild(card);
+  });
+
+  loose.forEach((item) => {
     const card = document.createElement("article");
     card.className = "rounded-xl border border-dashed border-blue-300 p-2" + (highlightId && item.id === highlightId ? " outline outline-2 outline-emerald-300" : "");
     card.dataset.id = item.id;
@@ -492,9 +528,14 @@ function closeMedia() {
 
 els.cards.addEventListener("click", async (e) => {
   if (e.target.closest("a")) return;
+  const showEl = e.target.closest("[data-show]");
   const play = e.target.closest("[data-play]");
   const del = e.target.closest("[data-delete]");
   const fav = e.target.closest("[data-fav]");
+  if (showEl && !play && !del && !fav) {
+    openSeries(showEl.getAttribute("data-show"));
+    return;
+  }
   if (fav) {
     const item = library.find((i) => i.id === fav.getAttribute("data-fav"));
     if (!item) return;
@@ -560,6 +601,9 @@ els.importInput.addEventListener("change", async () => {
         title: String(item.title).slice(0, 80),
         tag: String(item.tag || "").slice(0, 24),
         shelf: String(item.shelf || "Other"),
+        show: String(item.show || ""),
+        season: Number(item.season) || 0,
+        episode: Number(item.episode) || 0,
         notes: String(item.notes || "").slice(0, 240),
         type: item.type === "file" ? "file" : "link",
         url: String(item.url || ""),
@@ -579,6 +623,63 @@ els.importInput.addEventListener("change", async () => {
   } finally {
     els.importInput.value = "";
   }
+});
+
+function openSeries(key) {
+  const eps = library.filter((item) => (item.show || "").toLowerCase() === key);
+  eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
+  const panel = document.getElementById("seriesPanel");
+  const list = document.getElementById("seriesList");
+  document.getElementById("seriesTitle").textContent = eps[0] ? eps[0].show : "Series";
+  const seasons = new Map();
+  eps.forEach((ep) => {
+    const season = ep.season || 1;
+    if (!seasons.has(season)) seasons.set(season, []);
+    seasons.get(season).push(ep);
+  });
+  list.innerHTML = "";
+  seasons.forEach((rows, season) => {
+    const block = document.createElement("div");
+    block.className = "mb-4";
+    block.innerHTML = '<h3 class="mb-2 font-semibold">Season ' + season + '</h3>';
+    rows.forEach((ep) => {
+      const row = document.createElement("div");
+      row.className = "mb-2 flex items-center justify-between gap-2 rounded-lg bg-ink px-3 py-2";
+      row.innerHTML =
+        '<span>E' + (ep.episode || "?") + ' · ' + escapeHtml(ep.title) + '</span>' +
+        '<span class="flex gap-2"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-play="' + ep.id + '">Watch</button>' +
+        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-delete="' + ep.id + '">Delete</button></span>';
+      block.appendChild(row);
+    });
+    list.appendChild(block);
+  });
+  panel.classList.remove("hidden");
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+document.getElementById("closeSeries").addEventListener("click", () => {
+  document.getElementById("seriesPanel").classList.add("hidden");
+});
+document.getElementById("seriesList").addEventListener("click", async (e) => {
+  const play = e.target.closest("[data-play]");
+  const del = e.target.closest("[data-delete]");
+  if (play) {
+    const item = library.find((i) => i.id === play.getAttribute("data-play"));
+    await openSaved(item);
+  }
+  if (del) {
+    const id = del.getAttribute("data-delete");
+    const item = library.find((i) => i.id === id);
+    if (!item || !confirm('Delete "' + item.title + '"?')) return;
+    library = library.filter((i) => i.id !== id);
+    saveMeta();
+    if (item.type === "file") await deleteStored(id).catch(() => {});
+    render();
+    openSeries((item.show || "").toLowerCase());
+  }
+});
+document.getElementById("shelfInput").addEventListener("change", (e) => {
+  document.getElementById("seriesFields").classList.toggle("hidden", e.target.value !== "Series");
 });
 
 render();
