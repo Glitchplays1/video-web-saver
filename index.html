@@ -9,110 +9,122 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ["Poppins", "Segoe UI", "sans-serif"] },
+          colors: { ink: "#0b1220", bar: "#1e293b", nav: "#333e4d" }
+        }
+      }
+    };
+  </script>
+  <style>
+    .cat.active { color: #bfdbfe; }
+    .tab.active { background: #1d4ed8; }
+  </style>
 </head>
-<body>
-  <div id="loader" class="loader" role="status" aria-live="polite">
-    <div class="loader-glow" aria-hidden="true"></div>
-    <img class="loader-logo" src="yaflix-loading.gif" alt="Yaflix loading" onerror="this.onerror=null;this.src='yaflix-logo.svg';this.classList.add('static-logo')" />
-    <div class="loader-spin" aria-hidden="true"></div>
-    <p class="loader-text">LOADING</p>
+<body class="min-h-screen bg-ink font-sans text-white">
+  <div class="hidden aspect-[2/3] border-dashed bg-black/70 object-cover outline outline-2 outline-emerald-300"></div>
+  <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-500" role="status">
+    <img class="w-[min(460px,82vw)] animate-pulse drop-shadow-[0_0_18px_rgba(255,26,26,0.45)]" src="yaflix-loading.gif" alt="Yaflix loading" onerror="this.onerror=null;this.src='yaflix-logo.svg'" />
+    <div class="mt-4 h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-red-600"></div>
+    <p class="mt-3 text-xs tracking-[0.42em]">LOADING</p>
   </div>
 
-  <div class="topbar">
-    <a href="#about">About</a>
-    <a href="#add">Add</a>
-    <a href="#storage">Storage</a>
-    <a href="#about">Privacy</a>
+  <div class="flex justify-end gap-4 bg-bar px-5 py-2 text-sm">
+    <a class="hover:text-blue-200" href="#about">About</a>
+    <a class="hover:text-blue-200" href="#add">Add</a>
+    <a class="hover:text-blue-200" href="#storage">Storage</a>
+    <a class="hover:text-blue-200" href="#about">Privacy</a>
   </div>
 
-  <header class="mainbar">
-    <a class="brand" href="#library">
-      <img src="yaflix-logo.svg" alt="Yaflix" />
-    </a>
-    <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu">Menu</button>
-    <nav id="siteNav" class="cats">
-      <button type="button" class="cat active" data-filter="all">All</button>
-      <button type="button" class="cat" data-filter="movies">Movies</button>
-      <button type="button" class="cat" data-filter="series">Series</button>
-      <button type="button" class="cat" data-filter="file">Files</button>
-      <button type="button" class="cat" data-filter="fav">Favorites</button>
+  <header class="sticky top-0 z-20 flex min-h-[70px] items-center gap-3 bg-nav px-4 py-2">
+    <a href="#library"><img class="h-auto w-36" src="yaflix-logo.svg" alt="Yaflix" /></a>
+    <button id="menuBtn" class="ml-auto rounded-lg border border-slate-500 px-3 py-1 md:hidden" type="button">Menu</button>
+    <nav id="siteNav" class="ml-auto hidden flex-col gap-1 rounded-xl bg-bar p-2 md:flex md:flex-row md:bg-transparent md:p-0">
+      <button type="button" class="cat rounded-lg px-3 py-2 text-blue-200" data-filter="all">All</button>
+      <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="movies">Movies</button>
+      <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="series">Series</button>
+      <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="file">Files</button>
+      <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="fav">Favorites</button>
     </nav>
-    <form id="navSearch" class="searchbox" role="search">
-      <span aria-hidden="true">⌕</span>
-      <input id="searchInput" type="search" placeholder="Search..." />
+    <form id="navSearch" class="hidden items-center rounded-lg bg-bar px-3 md:flex" role="search">
+      <span class="text-slate-400">⌕</span>
+      <input id="searchInput" class="w-36 bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search..." />
     </form>
-    <button id="openAdd" class="pill" type="button">Add video</button>
+    <button id="openAdd" class="rounded-full bg-blue-500 px-4 py-2 font-semibold" type="button">Add video</button>
   </header>
 
-  <div id="alertBar" class="alertbar">
-    <span>Alert</span>
-    <p>Bookmark this page for your next visit.</p>
-    <button id="closeAlert" type="button" aria-label="Close alert">×</button>
+  <div id="alertBar" class="mx-auto mt-5 flex w-[min(360px,calc(100%-2rem))] items-center gap-2 rounded-xl bg-bar px-3 py-1.5">
+    <span class="rounded-full bg-blue-300 px-2 text-xs font-bold text-slate-800">Alert</span>
+    <p class="flex-1 text-sm">Bookmark this page for your next visit.</p>
+    <button id="closeAlert" class="text-2xl" type="button" aria-label="Close alert">×</button>
   </div>
 
-  <main id="library">
-    <p id="storageInfo" class="countline"></p>
-    <div id="cards" class="cards"></div>
-    <p id="emptyState" class="empty">Nothing saved yet. Press Add video, then Save video. A picture card will show here.</p>
+  <main id="library" class="mx-auto mt-4 w-[min(1400px,calc(100%-2rem))]">
+    <p id="storageInfo" class="mb-3 text-sm text-slate-400"></p>
+    <div id="cards" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"></div>
+    <p id="emptyState" class="py-8 text-center text-slate-400">Nothing saved yet. Press Add video, then Save video. A picture card will show here.</p>
   </main>
 
-  <section id="add" class="panel">
-    <h2>Add a video</h2>
-    <p class="fine">Only save videos you made or have permission to keep. A picture shows as soon as you save.</p>
-    <form id="addForm">
-      <div class="grid">
-        <label>Title
-          <input id="titleInput" type="text" maxlength="80" placeholder="My project video" required />
+  <section id="add" class="mx-auto my-6 w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
+    <h2 class="text-2xl font-bold">Add a video</h2>
+    <p class="mt-1 text-slate-300">Only save videos you made or have permission to keep. A picture shows as soon as you save.</p>
+    <form id="addForm" class="mt-3">
+      <div class="grid gap-3 md:grid-cols-[1fr_180px]">
+        <label class="text-sm text-slate-300">Title
+          <input id="titleInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="80" placeholder="My project video" required />
         </label>
-        <label>Shelf
-          <select id="shelfInput">
-            <option value="Movies">Movies</option>
-            <option value="Series">Series</option>
-            <option value="Other">Other</option>
+        <label class="text-sm text-slate-300">Shelf
+          <select id="shelfInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2">
+            <option>Movies</option>
+            <option>Series</option>
+            <option>Other</option>
           </select>
         </label>
       </div>
-      <label>Tag
-        <input id="tagInput" type="text" maxlength="24" placeholder="school, family, ideas" />
+      <label class="mt-3 block text-sm text-slate-300">Tag
+        <input id="tagInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="24" placeholder="school, family, ideas" />
       </label>
-      <label>Notes
-        <textarea id="notesInput" rows="2" maxlength="240" placeholder="What is this video about?"></textarea>
+      <label class="mt-3 block text-sm text-slate-300">Notes
+        <textarea id="notesInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" rows="2" maxlength="240" placeholder="What is this video about?"></textarea>
       </label>
-      <div class="tabs">
-        <button type="button" class="tab active" data-mode="link">Save a link</button>
-        <button type="button" class="tab" data-mode="file">Save a file from this device</button>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <button type="button" class="tab rounded-full bg-blue-700 px-3 py-2" data-mode="link">Save a link</button>
+        <button type="button" class="tab rounded-full bg-ink px-3 py-2" data-mode="file">Save a file from this device</button>
       </div>
       <div id="linkFields">
-        <label>Video page or file link
-          <input id="urlInput" type="text" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." />
+        <label class="mt-3 block text-sm text-slate-300">Video page or file link
+          <input id="urlInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" placeholder="https://www.youtube.com/watch?v=..." />
         </label>
-        <label>Picture link (optional)
-          <input id="thumbInput" type="text" inputmode="url" placeholder="https://example.com/picture.jpg" />
+        <label class="mt-3 block text-sm text-slate-300">Picture link (optional)
+          <input id="thumbInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" placeholder="https://example.com/picture.jpg" />
         </label>
       </div>
       <div id="fileFields" hidden>
-        <label class="drop" id="dropZone">
+        <label id="dropZone" class="mt-3 block cursor-pointer rounded-xl border border-dashed border-blue-300 p-5 text-center">
           <input id="fileInput" type="file" accept="video/*" hidden />
           <strong>Choose a video file</strong>
-          <span>or drop it here. Stored only in this browser.</span>
-          <em id="fileName">No file chosen</em>
+          <span class="mt-1 block text-slate-300">or drop it here. Stored only in this browser.</span>
+          <em id="fileName" class="mt-1 block">No file chosen</em>
         </label>
       </div>
-      <button class="pill wide" id="saveBtn" type="submit">Save video</button>
-      <p id="saveStatus" class="status"></p>
+      <button id="saveBtn" class="mt-4 w-full rounded-full bg-blue-500 py-3 font-semibold" type="submit">Save video</button>
+      <p id="saveStatus" class="mt-2 min-h-[1.2em] text-emerald-300"></p>
     </form>
   </section>
 
-  <section id="storage" class="panel">
-    <h2>Storage</h2>
-    <p id="storageDetail" class="fine">Lists stay in this browser. Video files and pictures stay in IndexedDB.</p>
-    <div class="row">
-      <button id="exportBtn" class="ghost" type="button">Export list</button>
-      <label class="ghost file-label">Import list
+  <section id="storage" class="mx-auto my-6 w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
+    <h2 class="text-2xl font-bold">Storage</h2>
+    <p id="storageDetail" class="mt-1 text-slate-300">Lists stay in this browser. Video files and pictures stay in IndexedDB.</p>
+    <div class="mt-3 flex flex-wrap items-center gap-2">
+      <button id="exportBtn" class="rounded-full border border-slate-500 px-3 py-2" type="button">Export list</button>
+      <label class="rounded-full border border-slate-500 px-3 py-2">Import list
         <input id="importInput" type="file" accept="application/json" hidden />
       </label>
-      <select id="filterSelect" aria-label="Filter" hidden>
+      <select id="filterSelect" class="hidden" aria-label="Filter">
         <option value="all">All</option>
         <option value="link">Links</option>
         <option value="file">Files</option>
@@ -120,7 +132,7 @@
         <option value="movies">Movies</option>
         <option value="series">Series</option>
       </select>
-      <select id="sortSelect" aria-label="Sort">
+      <select id="sortSelect" class="rounded-lg border border-slate-600 bg-ink px-3 py-2" aria-label="Sort">
         <option value="new">Newest</option>
         <option value="old">Oldest</option>
         <option value="title">Title</option>
@@ -128,28 +140,28 @@
     </div>
   </section>
 
-  <section id="about" class="panel">
-    <h2>About Yaflix</h2>
-    <p class="fine">Yaflix keeps your own videos and allowed links on this device. It does not download movies from other websites.</p>
+  <section id="about" class="mx-auto my-6 w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
+    <h2 class="text-2xl font-bold">About Yaflix</h2>
+    <p class="mt-1 text-slate-300">Built with HTML, Tailwind CSS, and JavaScript. Hosted on Netlify. It keeps videos you own or are allowed to save. It does not download movies from other websites.</p>
   </section>
 
-  <dialog id="playerDialog">
-    <div class="player-box">
-      <div class="player-top">
-        <h3 id="playerTitle"></h3>
-        <button id="closePlayer" type="button" class="ghost">Close</button>
+  <dialog id="playerDialog" class="w-[min(820px,92vw)] rounded-2xl bg-ink p-0 text-white">
+    <div class="p-4">
+      <div class="flex items-center justify-between gap-3">
+        <h3 id="playerTitle" class="text-lg font-semibold"></h3>
+        <button id="closePlayer" class="rounded-full border border-slate-500 px-3 py-1" type="button">Close</button>
       </div>
-      <video id="player" controls playsinline></video>
-      <iframe id="embedPlayer" title="Saved video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" hidden></iframe>
-      <p id="playerHint" class="fine"></p>
+      <video id="player" class="mt-3 w-full rounded-xl bg-black" controls playsinline></video>
+      <iframe id="embedPlayer" class="mt-3 aspect-video min-h-[260px] w-full rounded-xl" title="Saved video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" hidden></iframe>
+      <p id="playerHint" class="mt-2 text-sm text-slate-300"></p>
     </div>
   </dialog>
 
-  <div id="toast" class="toast" hidden></div>
+  <div id="toast" class="fixed bottom-4 left-1/2 z-40 hidden -translate-x-1/2 rounded-full border border-emerald-300 bg-bar px-4 py-2"></div>
 
-  <footer>
+  <footer class="mt-8 bg-nav py-4 text-center">
     <p>Copyright <span id="year"></span> Yaflix. All rights reserved.</p>
-    <p class="sub">Your videos stay on this device.</p>
+    <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="app.js"></script>
   <script>
@@ -162,6 +174,12 @@
       document.getElementById("titleInput").focus();
     });
     document.getElementById("navSearch").addEventListener("submit", function (e) { e.preventDefault(); });
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        var el = document.getElementById("loader");
+        if (el) el.classList.add("opacity-0", "pointer-events-none");
+      }, 1400);
+    });
   </script>
 </body>
 </html>

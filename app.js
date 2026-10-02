@@ -44,15 +44,22 @@ let library = loadMeta();
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
-  setTimeout(() => loader && loader.classList.add("hide"), 1600);
+  setTimeout(() => {
+    if (!loader) return;
+    loader.classList.add("opacity-0", "pointer-events-none");
+  }, 1600);
 });
 
 els.menuBtn.addEventListener("click", () => {
-  const open = els.siteNav.classList.toggle("open");
-  els.menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  const open = els.siteNav.classList.toggle("hidden");
+  els.siteNav.classList.toggle("absolute");
+  els.siteNav.classList.toggle("left-3");
+  els.siteNav.classList.toggle("right-3");
+  els.siteNav.classList.toggle("top-16");
+  els.menuBtn.setAttribute("aria-expanded", open ? "false" : "true");
 });
 els.siteNav.addEventListener("click", (e) => {
-  if (e.target.closest("a")) els.siteNav.classList.remove("open");
+  if (e.target.closest("button") && window.innerWidth < 768) els.siteNav.classList.add("hidden");
 });
 
 function loadMeta() {
@@ -386,19 +393,19 @@ function render(highlightId) {
 
   items.forEach((item) => {
     const card = document.createElement("article");
-    card.className = "card" + (highlightId && item.id === highlightId ? " new-card" : "");
+    card.className = "rounded-xl border border-dashed border-blue-300 p-2" + (highlightId && item.id === highlightId ? " outline outline-2 outline-emerald-300" : "");
     card.dataset.id = item.id;
     const pic = item.thumbUrl || item.poster || posterDataUrl(item.title);
     card.innerHTML =
-      '<div class="thumb-wrap" data-play="' + item.id + '">' +
-        '<img alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '">' +
-        '<span class="play-mark">▶</span>' +
+      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-play="' + item.id + '">' +
+        '<img class="h-full w-full object-cover" alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '">' +
+        '<span class="absolute bottom-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-xs">▶</span>' +
       '</div>' +
-      '<h3>' + escapeHtml(item.title) + '</h3>' +
-      '<div class="card-actions">' +
-        '<button type="button" data-play="' + item.id + '">Watch</button>' +
-        '<button type="button" data-fav="' + item.id + '">' + (item.favorite ? "Saved" : "Favorite") + '</button>' +
-        '<button type="button" data-delete="' + item.id + '">Delete</button>' +
+      '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(item.title) + '</h3>' +
+      '<div class="mb-1 flex flex-wrap justify-center gap-1">' +
+        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-play="' + item.id + '">Watch</button>' +
+        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-fav="' + item.id + '">' + (item.favorite ? "Saved" : "Favorite") + '</button>' +
+        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-delete="' + item.id + '">Delete</button>' +
       '</div>';
     const img = card.querySelector("img");
     img.addEventListener("error", () => {

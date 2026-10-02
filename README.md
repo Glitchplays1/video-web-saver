@@ -1,33 +1,13 @@
 # Yaflix
 
-A video library you can open in a browser. It saves:
+Personal video shelf built with HTML, Tailwind CSS, and JavaScript.
 
-- links to videos you are allowed to keep
-- video files from your own computer
+- `index.html` — page and Tailwind layout
+- `app.js` — save, search, pictures, and browser storage
+- `netlify.toml` — Netlify publish settings
 
-Pictures show on every card as soon as you press **Save video**. Lists are stored in `localStorage`. Video files and captured pictures are stored in IndexedDB on this device.
+Only save videos you made or have permission to keep. This site does not download movies from other websites.
 
-## What this is not
+## Netlify
 
-This is not a movie download site. Only save videos you made, videos you have permission to keep, or videos that are free to use.
-
-## Features
-
-1. Modern dark UI with the Yaflix logo and loading screen
-2. Easy navigation: Home, Add, Library, Storage
-3. Responsive layout for phones and desktops
-4. Search, filters, favorites, sort, export, and import
-
-## GitHub Pages
-
-Repository: https://github.com/Glitchplays1/Yaflix
-
-After Pages is turned on from the `main` branch, open:
-
-https://glitchplays1.github.io/Yaflix/
-
-The same site files can also live in https://github.com/Glitchplays1/video-web-saver
-
-## License
-
-MIT
+Connect this GitHub repository in Netlify and publish the site root. The live folder is ready to deploy as a static site.
