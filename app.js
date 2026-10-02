@@ -340,7 +340,7 @@ els.form.addEventListener("submit", async (e) => {
   render(item.id);
   toast("Saved. Your video is in the library.");
   els.saveStatus.textContent = "Saved! The card is in Your library.";
-  document.getElementById("library").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (window.showView) window.showView("library");
 
   els.form.reset();
   pendingFile = null;
