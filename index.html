@@ -30,7 +30,7 @@
   </style>
 </head>
 <body class="min-h-screen bg-ink font-sans text-white">
-  <div class="hidden aspect-[2/3] border-dashed bg-black/70 object-cover outline outline-2 outline-emerald-300"></div>
+  <div class="hidden aspect-[2/3] border-dashed bg-black/70 object-cover outline outline-2 outline-emerald-300 max-md:absolute max-md:left-3 max-md:right-3 max-md:top-16 max-md:z-30 max-md:flex"></div>
   <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-500" role="status">
     <img class="w-[min(460px,82vw)] animate-pulse drop-shadow-[0_0_18px_rgba(255,26,26,0.45)]" src="yaflix-loading.gif" alt="Yaflix loading" onerror="this.onerror=null;this.src='yaflix-logo.svg'" />
     <div class="mt-4 h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-red-600"></div>
@@ -45,8 +45,8 @@
     <a class="view-link hover:text-blue-200" href="#about" data-view="about">About</a>
   </div>
 
-  <header class="sticky top-0 z-20 flex min-h-[70px] items-center gap-3 bg-nav px-4 py-2">
-    <a href="#library"><img class="h-auto w-36" src="yaflix-logo.svg" alt="Yaflix" /></a>
+  <header class="sticky top-0 z-40 flex min-h-[70px] items-center gap-3 bg-nav px-4 py-2">
+    <a id="logoHome" href="#library"><img class="h-auto w-36" src="yaflix-logo.svg" alt="Yaflix" /></a>
     <button id="menuBtn" class="ml-auto rounded-lg border border-slate-500 px-3 py-1 md:hidden" type="button">Menu</button>
     <nav id="siteNav" class="ml-auto hidden flex-col gap-1 rounded-xl bg-bar p-2 md:flex md:flex-row md:bg-transparent md:p-0">
       <button type="button" class="cat rounded-lg px-3 py-2 text-blue-200" data-filter="all">All</button>
@@ -293,6 +293,13 @@
       document.getElementById("colorShift").checked = false;
       localStorage.setItem("yaflix-shift", "off");
       applyBg("#0b1220");
+    });
+    document.getElementById("logoHome").addEventListener("click", function (e) {
+      e.preventDefault();
+      showView("library");
+    });
+    document.getElementById("navSearch").addEventListener("focusin", function () {
+      showView("library");
     });
     document.getElementById("navSearch").addEventListener("submit", function (e) { e.preventDefault(); });
     window.addEventListener("load", function () {

@@ -51,15 +51,20 @@ window.addEventListener("load", () => {
 });
 
 els.menuBtn.addEventListener("click", () => {
-  const open = els.siteNav.classList.toggle("hidden");
-  els.siteNav.classList.toggle("absolute");
-  els.siteNav.classList.toggle("left-3");
-  els.siteNav.classList.toggle("right-3");
-  els.siteNav.classList.toggle("top-16");
-  els.menuBtn.setAttribute("aria-expanded", open ? "false" : "true");
+  const open = els.siteNav.classList.toggle("max-md:flex");
+  els.siteNav.classList.toggle("max-md:absolute");
+  els.siteNav.classList.toggle("max-md:left-3");
+  els.siteNav.classList.toggle("max-md:right-3");
+  els.siteNav.classList.toggle("max-md:top-16");
+  els.siteNav.classList.toggle("max-md:z-30");
+  els.menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
 });
+function closeMobileNav() {
+  els.siteNav.classList.remove("max-md:flex", "max-md:absolute", "max-md:left-3", "max-md:right-3", "max-md:top-16", "max-md:z-30");
+  els.menuBtn.setAttribute("aria-expanded", "false");
+}
 els.siteNav.addEventListener("click", (e) => {
-  if (e.target.closest("button") && window.innerWidth < 768) els.siteNav.classList.add("hidden");
+  if (e.target.closest("button")) closeMobileNav();
 });
 
 function loadMeta() {
@@ -527,6 +532,7 @@ document.querySelectorAll(".cat").forEach((btn) => {
     document.querySelectorAll(".cat").forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     els.filter.value = btn.dataset.filter;
+    if (window.showView) window.showView("library");
     render();
   });
 });
