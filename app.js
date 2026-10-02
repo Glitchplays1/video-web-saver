@@ -581,6 +581,7 @@ els.cards.addEventListener("click", async (e) => {
   const fav = e.target.closest("[data-fav]");
   if (infoEl && !play && !del && !fav) {
     const item = library.find((i) => i.id === infoEl.getAttribute("data-info"));
+    if (!item) return;
     if (isPhone()) await openSaved(item, getProgress(item.id) > 2);
     else openTitle(item);
     return;
@@ -886,9 +887,12 @@ document.getElementById("captionBtn").addEventListener("click", () => {
   tracks[0].mode = tracks[0].mode === "showing" ? "hidden" : "showing";
 });
 document.getElementById("playerWrap").addEventListener("mousemove", () => {
-  document.getElementById("playerControls").classList.remove("hidden");
+  const controls = document.getElementById("playerControls");
+  if (controls) controls.classList.remove("hidden");
 });
-document.getElementById("playerControls").addEventListener("click", (e) => e.stopPropagation());
+["playPause", "back10", "fwd10", "volumeBar", "progressBar", "captionBtn", "previewToggle", "autoplayToggle"].forEach((id) => {
+  if (!document.getElementById(id)) console.warn("Missing", id);
+});
 document.getElementById("previewToggle").checked = previewsOn();
 document.getElementById("autoplayToggle").checked = autoplayOn();
 document.getElementById("previewToggle").addEventListener("change", (e) => {
