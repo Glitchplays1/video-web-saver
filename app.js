@@ -499,6 +499,9 @@ function escapeHtml(value) {
     .replace(/>/g, "\u0026gt;")
     .replace(/"/g, "\u0026quot;");
 }
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
 function matchScore(title) {
   let hash = 0;
   for (const ch of String(title || "Yaflix")) hash = (hash * 33 + ch.charCodeAt(0)) >>> 0;
