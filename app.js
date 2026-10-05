@@ -356,7 +356,7 @@ els.form.addEventListener("submit", async (e) => {
       type: useFile ? "file" : "link",
       url: useFile ? "" : typedUrl,
       thumbUrl: useFile ? "" : thumbnailFromLink(typedUrl, extraThumb),
-      poster: "",
+      poster: posterDataUrl(showName || title),
       fileName: pickedFile ? pickedFile.name : "",
       size: pickedFile ? pickedFile.size : 0,
       favorite: false,
@@ -367,10 +367,15 @@ els.form.addEventListener("submit", async (e) => {
     try { saveMeta(); } catch { toast("Saved on this page. Browser storage is full, so it may not stay after refresh."); }
     if (els.search) els.search.value = "";
     if (els.filter) els.filter.value = "all";
+    document.querySelectorAll("[data-view-panel]").forEach((panel) => {
+      panel.classList.toggle("hidden", panel.id !== "library");
+    });
+    document.getElementById("seriesPanel").classList.add("hidden");
     render(item.id);
+    const made = els.cards.querySelector('[data-id="' + item.id + '"], [data-show]');
+    if (made) made.scrollIntoView({ behavior: "smooth", block: "center" });
     toast("Saved. Your video is in the library.");
     if (els.saveStatus) els.saveStatus.textContent = "Saved! Look in the library.";
-    if (window.showView) window.showView("library");
 
     els.form.reset();
     pendingFile = null;
@@ -448,12 +453,13 @@ function render(highlightId) {
     const pic = first.thumbUrl || first.poster || posterDataUrl(first.show);
     card.innerHTML =
       '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-show="' + escapeAttr(key) + '">' +
-        '<img class="h-full w-full object-cover" alt="' + escapeHtml(first.show) + '" src="' + escapeAttr(pic) + '">' +
+        '<img class="h-full w-full object-cover" alt="' + escapeHtml(first.show) + '">' +
         '<span class="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-xs">' + eps.length + ' eps</span>' +
       '</div>' +
       '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(first.show) + '</h3>' +
       '<p class="mb-2 text-center text-xs text-slate-300">' + seasons + ' season' + (seasons === 1 ? '' : 's') + '</p>' +
       '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeAttr(key) + '">Open series</button></div>';
+    card.querySelector("img").src = pic || posterDataUrl(first.show);
     els.cards.appendChild(card);
   });
 
@@ -464,7 +470,7 @@ function render(highlightId) {
     const pic = item.thumbUrl || item.poster || posterDataUrl(item.title);
     card.innerHTML =
       '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-info="' + item.id + '">' +
-        '<img class="h-full w-full object-cover" alt="' + escapeHtml(item.title) + '" src="' + escapeAttr(pic) + '">' +
+        '<img class="h-full w-full object-cover" alt="' + escapeHtml(item.title) + '">' +
         '<span class="absolute bottom-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-xs">▶</span>' +
       '</div>' +
       '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(item.title) + '</h3>' +
@@ -474,9 +480,8 @@ function render(highlightId) {
         '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-delete="' + item.id + '">Delete</button>' +
       '</div>';
     const img = card.querySelector("img");
-    img.addEventListener("error", () => {
-      if (item.poster && img.src !== item.poster) img.src = item.poster;
-    });
+    img.src = pic || posterDataUrl(item.title);
+    img.addEventListener("error", () => { img.src = posterDataUrl(item.title); });
     els.cards.appendChild(card);
     if (!item.thumbUrl && item.type === "file") fillStoredThumb(item);
   });
