@@ -77,7 +77,13 @@ function loadMeta() {
 }
 
 function saveMeta() {
-  localStorage.setItem(META_KEY, JSON.stringify(library));
+  const slim = library.map((item) => {
+    const copy = Object.assign({}, item);
+    if (String(copy.poster || "").startsWith("data:")) delete copy.poster;
+    if (String(copy.thumbUrl || "").startsWith("data:")) delete copy.thumbUrl;
+    return copy;
+  });
+  localStorage.setItem(META_KEY, JSON.stringify(slim));
 }
 
 function openDb() {
@@ -176,40 +182,43 @@ function thumbnailFromLink(url, extraThumb) {
 }
 
 function posterDataUrl(title) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 480;
-  canvas.height = 720;
-  const ctx = canvas.getContext("2d");
-  let hash = 0;
-  for (const ch of title) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
-  const hue = hash % 360;
-  const g = ctx.createLinearGradient(0, 0, 480, 720);
-  g.addColorStop(0, "hsl(" + hue + " 70% 28%)");
-  g.addColorStop(1, "#07070c");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 480, 720);
-  ctx.fillStyle = "#ff1a1a";
-  ctx.fillRect(0, 0, 480, 10);
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "700 42px Trebuchet MS, Segoe UI, sans-serif";
-  const words = title.split(/\s+/);
-  let line = "";
-  let y = 280;
-  words.forEach((word) => {
-    const next = line ? line + " " + word : word;
-    if (ctx.measureText(next).width > 400) {
-      ctx.fillText(line, 36, y);
-      line = word;
-      y += 50;
-    } else {
-      line = next;
-    }
-  });
-  if (line) ctx.fillText(line, 36, y);
-  ctx.fillStyle = "#ffb4b4";
-  ctx.font = "600 22px Trebuchet MS, Segoe UI, sans-serif";
-  ctx.fillText("YAFLIX", 36, 650);
-  return canvas.toDataURL("image/jpeg", 0.82);
+  try {
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 480;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "";
+    let hash = 0;
+    const safe = String(title || "Video");
+    for (const ch of safe) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+    const hue = hash % 360;
+    const g = ctx.createLinearGradient(0, 0, 320, 480);
+    g.addColorStop(0, "hsl(" + hue + " 70% 28%)");
+    g.addColorStop(1, "#07070c");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 320, 480);
+    ctx.fillStyle = "#ff1a1a";
+    ctx.fillRect(0, 0, 320, 8);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 28px Trebuchet MS, Segoe UI, sans-serif";
+    const words = safe.split(/\s+/);
+    let line = "";
+    let y = 190;
+    words.forEach((word) => {
+      const next = line ? line + " " + word : word;
+      if (ctx.measureText(next).width > 260) {
+        ctx.fillText(line, 24, y);
+        line = word;
+        y += 36;
+      } else {
+        line = next;
+      }
+    });
+    if (line) ctx.fillText(line, 24, y);
+    return canvas.toDataURL("image/jpeg", 0.7);
+  } catch {
+    return "";
+  }
 }
 
 function captureFrame(file) {
@@ -347,7 +356,7 @@ els.form.addEventListener("submit", async (e) => {
       type: useFile ? "file" : "link",
       url: useFile ? "" : typedUrl,
       thumbUrl: useFile ? "" : thumbnailFromLink(typedUrl, extraThumb),
-      poster: posterDataUrl(showName || title),
+      poster: "",
       fileName: pickedFile ? pickedFile.name : "",
       size: pickedFile ? pickedFile.size : 0,
       favorite: false,
@@ -355,15 +364,12 @@ els.form.addEventListener("submit", async (e) => {
     };
 
     library.unshift(item);
-    saveMeta();
-    els.search.value = "";
-    els.filter.value = "all";
-    document.querySelectorAll(".cat").forEach((b) => b.classList.remove("active"));
-    const allBtn = document.querySelector('.cat[data-filter="all"]');
-    if (allBtn) allBtn.classList.add("active");
+    try { saveMeta(); } catch { toast("Saved on this page. Browser storage is full, so it may not stay after refresh."); }
+    if (els.search) els.search.value = "";
+    if (els.filter) els.filter.value = "all";
     render(item.id);
     toast("Saved. Your video is in the library.");
-    els.saveStatus.textContent = "Saved! Look in the library.";
+    if (els.saveStatus) els.saveStatus.textContent = "Saved! Look in the library.";
     if (window.showView) window.showView("library");
 
     els.form.reset();
@@ -389,8 +395,8 @@ els.form.addEventListener("submit", async (e) => {
     }
   } catch (err) {
     console.error(err);
-    toast("Could not add that video. Try again.");
-    els.saveStatus.textContent = "Could not add that video. Try again.";
+    toast("Could not add that video. " + (err && err.message ? err.message : "Try again."));
+    if (els.saveStatus) els.saveStatus.textContent = "Could not add that video. " + (err && err.message ? err.message : "Try again.");
   }
 });
 
@@ -419,7 +425,7 @@ function render(highlightId) {
   const totalBytes = library.reduce((sum, i) => sum + (i.size || 0), 0);
   const summary = library.length + " saved · " + fileCount + " files · " + prettySize(totalBytes);
   els.storage.textContent = summary;
-  els.storageDetail.textContent = summary + " in this browser. Clearing site data removes files.";
+  if (els.storageDetail) els.storageDetail.textContent = summary + " in this browser. Clearing site data removes files.";
 
   const grouped = new Map();
   const loose = [];
