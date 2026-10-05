@@ -452,13 +452,13 @@ function render(highlightId) {
     card.className = "rounded-xl border border-dashed border-blue-300 p-2";
     const pic = first.thumbUrl || first.poster || posterDataUrl(first.show);
     card.innerHTML =
-      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-show="' + escapeAttr(key) + '">' +
+      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-show="' + escapeHtml(key) + '">' +
         '<img class="h-full w-full object-cover" alt="' + escapeHtml(first.show) + '">' +
         '<span class="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-xs">' + eps.length + ' eps</span>' +
       '</div>' +
       '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(first.show) + '</h3>' +
       '<p class="mb-2 text-center text-xs text-slate-300">' + seasons + ' season' + (seasons === 1 ? '' : 's') + '</p>' +
-      '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeAttr(key) + '">Open series</button></div>';
+      '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeHtml(key) + '">Open series</button></div>';
     card.querySelector("img").src = pic || posterDataUrl(first.show);
     els.cards.appendChild(card);
   });
@@ -502,7 +502,8 @@ function escapeHtml(value) {
     .replace(/&/g, "\u0026amp;")
     .replace(/</g, "\u0026lt;")
     .replace(/>/g, "\u0026gt;")
-    .replace(/"/g, "\u0026quot;");
+    .replace(/"/g, "\u0026quot;")
+    .replace(/'/g, "&#39;");
 }
 function escapeAttr(value) {
   return escapeHtml(value);
@@ -765,9 +766,11 @@ function openSeries(key) {
       const pic = ep.thumbUrl || ep.poster || "";
       row.innerHTML =
         '<span class="text-2xl text-slate-300">' + (ep.episode || "?") + '</span>' +
-        '<img class="h-16 w-28 rounded object-cover" alt="" src="' + escapeAttr(pic) + '">' +
+        '<img class="h-16 w-28 rounded object-cover" alt="">' +
         '<span><strong class="block">' + escapeHtml(ep.title) + '</strong><span class="mt-1 block text-sm text-slate-300">' + escapeHtml(ep.notes || "No description yet.") + '</span></span>' +
         '<span class="text-sm text-slate-300">' + (ep.minutes ? ep.minutes + "m" : "") + '</span>';
+      const shot = row.querySelector("img");
+      if (shot) shot.src = pic || posterDataUrl(ep.title);
       rows.appendChild(row);
     });
   }
