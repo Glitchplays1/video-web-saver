@@ -77,7 +77,10 @@
       <input id="searchInput" class="w-36 bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search..." />
     </form>
     <button id="openAdd" class="rounded-full bg-blue-500 px-4 py-2 font-semibold" type="button">Add video</button>
-    <button id="switchProfile" class="rounded-full border border-slate-500 px-3 py-1 text-sm" type="button">Switch</button>
+    <button id="switchProfile" class="h-10 w-10 overflow-hidden rounded-md bg-slate-700" type="button" aria-label="Switch profile">
+      <img id="cornerPic" class="h-full w-full object-cover" alt="" />
+    </button>
+    <label class="flex items-center gap-2 text-sm font-medium">
       <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
       Dark
     </label>
@@ -280,7 +283,7 @@
     <p>Copyright <span id="year"></span> Yaflix. All rights reserved.</p>
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("closeAlert").addEventListener("click", function () {

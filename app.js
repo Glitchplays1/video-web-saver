@@ -99,8 +99,11 @@ function drawProfiles() {
         drawProfiles();
         return;
       }
-      localStorage.setItem("yaflix-watching", p.name);
-      document.getElementById("switchProfile").textContent = p.name;
+      localStorage.setItem("yaflix-watching", p.id);
+      const corner = document.getElementById("cornerPic");
+      if (p.pic) corner.src = p.pic;
+      else corner.removeAttribute("src");
+      document.getElementById("switchProfile").style.background = p.color || "#334155";
       closeWho();
     });
     row.appendChild(btn);
