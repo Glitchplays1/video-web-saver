@@ -62,12 +62,12 @@ function saveProfiles() {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
 }
 function ratingName(level) {
-  return ["", "Little kids", "Kids", "Family", "Older kids"][Number(level) || 3] || "Family";
+  return ["", "TV-Y", "TV-Y7", "G", "PG", "PG-13"][Number(level) || 4] || "PG";
 }
 function currentRating() {
   const id = localStorage.getItem("yaflix-watching");
   const profile = profiles.find((p) => p.id === id);
-  return profile ? Number(profile.rating) || 3 : 4;
+  return profile ? Number(profile.rating) || 4 : 5;
 }
 function openWho() {
   const screen = document.getElementById("whoScreen");
@@ -125,6 +125,10 @@ function drawProfiles() {
   row.appendChild(add);
   document.getElementById("editProfiles").textContent = editingProfiles ? "DONE" : "EDIT PROFILES";
 }
+document.getElementById("ratingSlider").addEventListener("input", (e) => {
+  document.getElementById("profileRating").value = e.target.value;
+  document.getElementById("ratingBlurb").textContent = "Only show titles rated " + ratingName(e.target.value) + " and below for this profile.";
+});
 document.getElementById("editProfiles").addEventListener("click", () => {
   editingProfiles = !editingProfiles;
   drawProfiles();
