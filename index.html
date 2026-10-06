@@ -37,7 +37,22 @@
     <p class="mt-3 text-xs tracking-[0.42em]">LOADING</p>
   </div>
 
-  <div class="flex justify-end gap-4 bg-bar px-5 py-2 text-sm">
+  <div id="whoScreen" class="fixed inset-0 z-40 hidden flex-col items-center justify-center bg-[#141414] px-4 text-center">
+    <h2 class="text-4xl font-medium">Who's watching?</h2>
+    <div id="profileRow" class="mt-10 flex flex-wrap items-start justify-center gap-6"></div>
+    <button id="editProfiles" class="mt-12 border border-slate-500 px-6 py-2 tracking-widest text-slate-300" type="button">EDIT PROFILES</button>
+    <form id="profileForm" class="mt-8 hidden w-[min(360px,92vw)] rounded-2xl bg-bar p-4 text-left" >
+      <label class="block text-sm">Name
+        <input id="profileName" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="16" placeholder="Your name" required />
+      </label>
+      <label class="mt-3 block cursor-pointer rounded-xl border border-dashed border-slate-500 p-4 text-center text-sm">
+        <input id="profilePic" type="file" accept="image/*" class="hidden" />
+        Choose a picture from your files
+        <img id="profilePreview" class="mx-auto mt-3 hidden h-20 w-20 rounded-full object-cover" alt="" />
+      </label>
+      <button class="mt-4 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Save profile</button>
+    </form>
+  </div>
     <a class="view-link hover:text-blue-200" href="#library" data-view="library">Library</a>
     <a class="view-link hover:text-blue-200" href="#add" data-view="add">Add</a>
     <a class="view-link hover:text-blue-200" href="#storage" data-view="storage">Storage</a>
@@ -62,7 +77,7 @@
       <input id="searchInput" class="w-36 bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search..." />
     </form>
     <button id="openAdd" class="rounded-full bg-blue-500 px-4 py-2 font-semibold" type="button">Add video</button>
-    <label class="flex items-center gap-2 text-sm font-medium">
+    <button id="switchProfile" class="rounded-full border border-slate-500 px-3 py-1 text-sm" type="button">Switch</button>
       <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
       Dark
     </label>
@@ -265,7 +280,7 @@
     <p>Copyright <span id="year"></span> Yaflix. All rights reserved.</p>
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("closeAlert").addEventListener("click", function () {

@@ -47,8 +47,116 @@ window.addEventListener("load", () => {
   setTimeout(() => {
     if (!loader) return;
     loader.classList.add("opacity-0", "pointer-events-none");
-  }, 1600);
+    openWho();
+  }, 900);
 });
+
+const PROFILE_KEY = "yaflix-profiles";
+let profiles = [];
+let editingProfiles = false;
+try { profiles = JSON.parse(localStorage.getItem(PROFILE_KEY) || "[]"); } catch { profiles = []; }
+if (!Array.isArray(profiles)) profiles = [];
+
+function saveProfiles() {
+  const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "" }));
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
+}
+function openWho() {
+  const screen = document.getElementById("whoScreen");
+  if (!screen) return;
+  screen.classList.remove("hidden");
+  screen.classList.add("flex");
+  drawProfiles();
+}
+function closeWho() {
+  const screen = document.getElementById("whoScreen");
+  screen.classList.add("hidden");
+  screen.classList.remove("flex");
+}
+function drawProfiles() {
+  const row = document.getElementById("profileRow");
+  row.innerHTML = "";
+  profiles.forEach((p) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "w-28 text-slate-300 hover:text-white";
+    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span>';
+    const face = btn.querySelector("span");
+    if (p.pic) {
+      const img = document.createElement("img");
+      img.className = "h-full w-full object-cover";
+      img.alt = "";
+      img.src = p.pic;
+      face.appendChild(img);
+    } else {
+      face.textContent = (p.name || "?").slice(0, 1).toUpperCase();
+      face.style.background = p.color || "#334155";
+    }
+    btn.addEventListener("click", () => {
+      if (editingProfiles) {
+        profiles = profiles.filter((item) => item.id !== p.id);
+        saveProfiles();
+        drawProfiles();
+        return;
+      }
+      localStorage.setItem("yaflix-watching", p.name);
+      document.getElementById("switchProfile").textContent = p.name;
+      closeWho();
+    });
+    row.appendChild(btn);
+  });
+  const add = document.createElement("button");
+  add.type = "button";
+  add.className = "w-28 text-slate-300";
+  add.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center rounded-md bg-slate-800 text-5xl">+</span><span class="mt-2 block">Add Profile</span>';
+  add.addEventListener("click", () => document.getElementById("profileForm").classList.remove("hidden"));
+  row.appendChild(add);
+  document.getElementById("editProfiles").textContent = editingProfiles ? "DONE" : "EDIT PROFILES";
+}
+document.getElementById("editProfiles").addEventListener("click", () => {
+  editingProfiles = !editingProfiles;
+  drawProfiles();
+});
+document.getElementById("profilePic").addEventListener("change", () => {
+  const file = document.getElementById("profilePic").files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 160;
+      canvas.height = 160;
+      const ctx = canvas.getContext("2d");
+      const size = Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 160, 160);
+      const preview = document.getElementById("profilePreview");
+      preview.src = canvas.toDataURL("image/jpeg", 0.7);
+      preview.classList.remove("hidden");
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById("profileForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = document.getElementById("profileName").value.trim();
+  if (!name) return;
+  const preview = document.getElementById("profilePreview");
+  profiles.push({
+    id: uid(),
+    name: name.slice(0, 16),
+    color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
+    pic: preview.src && preview.src.startsWith("data:") ? preview.src : "",
+  });
+  saveProfiles();
+  e.target.reset();
+  preview.classList.add("hidden");
+  preview.removeAttribute("src");
+  e.target.classList.add("hidden");
+  drawProfiles();
+});
+document.getElementById("switchProfile").addEventListener("click", openWho);
 
 els.menuBtn.addEventListener("click", () => {
   const open = els.siteNav.classList.toggle("max-md:flex");
