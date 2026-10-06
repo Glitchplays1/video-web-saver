@@ -58,8 +58,16 @@ try { profiles = JSON.parse(localStorage.getItem(PROFILE_KEY) || "[]"); } catch 
 if (!Array.isArray(profiles)) profiles = [];
 
 function saveProfiles() {
-  const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "" }));
+  const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "", rating: Number(p.rating) || 3 }));
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
+}
+function ratingName(level) {
+  return ["", "Little kids", "Kids", "Family", "Older kids"][Number(level) || 3] || "Family";
+}
+function currentRating() {
+  const id = localStorage.getItem("yaflix-watching");
+  const profile = profiles.find((p) => p.id === id);
+  return profile ? Number(profile.rating) || 3 : 4;
 }
 function openWho() {
   const screen = document.getElementById("whoScreen");
@@ -80,7 +88,7 @@ function drawProfiles() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "w-28 text-slate-300 hover:text-white";
-    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span>';
+    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span><span class="block text-xs text-slate-400">' + escapeHtml(ratingName(p.rating)) + '</span>';
     const face = btn.querySelector("span");
     if (p.pic) {
       const img = document.createElement("img");
@@ -105,6 +113,7 @@ function drawProfiles() {
       else corner.removeAttribute("src");
       document.getElementById("switchProfile").style.background = p.color || "#334155";
       closeWho();
+      render();
     });
     row.appendChild(btn);
   });
@@ -151,6 +160,7 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
     name: name.slice(0, 16),
     color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
     pic: preview.src && preview.src.startsWith("data:") ? preview.src : "",
+    rating: Number(document.getElementById("profileRating").value) || 3,
   });
   saveProfiles();
   e.target.reset();
@@ -470,6 +480,7 @@ els.form.addEventListener("submit", async (e) => {
       poster: posterDataUrl(showName || title),
       fileName: pickedFile ? pickedFile.name : "",
       size: pickedFile ? pickedFile.size : 0,
+      rating: Number(document.getElementById("ratingInput").value) || 3,
       favorite: false,
       createdAt: new Date().toISOString(),
     };
@@ -525,7 +536,8 @@ function filtered() {
     if (kind === "movies") kindOk = shelf.includes("movie");
     if (kind === "series") kindOk = shelf.includes("series");
     const text = (item.title + " " + item.show + " " + item.notes + " " + item.tag + " " + item.shelf + " " + item.url + " " + item.fileName).toLowerCase();
-    return kindOk && text.includes(q);
+    const ratingOk = (Number(item.rating) || 3) <= currentRating();
+    return kindOk && ratingOk && text.includes(q);
   });
   if (els.sort.value === "old") items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   if (els.sort.value === "title") items.sort((a, b) => a.title.localeCompare(b.title));

@@ -45,6 +45,14 @@
       <label class="block text-sm">Name
         <input id="profileName" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="16" placeholder="Your name" required />
       </label>
+      <label class="mt-3 block text-sm">Age rating
+        <select id="profileRating" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2">
+          <option value="1">Little kids</option>
+          <option value="2">Kids</option>
+          <option value="3" selected>Family</option>
+          <option value="4">Older kids</option>
+        </select>
+      </label>
       <label class="mt-3 block cursor-pointer rounded-xl border border-dashed border-slate-500 p-4 text-center text-sm">
         <input id="profilePic" type="file" accept="image/*" class="hidden" />
         Choose a picture from your files
@@ -127,6 +135,14 @@
       <div class="grid gap-3 md:grid-cols-[1fr_180px]">
         <label class="text-sm text-slate-300">Title
           <input id="titleInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="80" placeholder="My project video" required />
+        </label>
+        <label class="text-sm text-slate-300">Age rating
+          <select id="ratingInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2">
+            <option value="1">Little kids</option>
+            <option value="2">Kids</option>
+            <option value="3" selected>Family</option>
+            <option value="4">Older kids</option>
+          </select>
         </label>
         <label class="text-sm text-slate-300">Shelf
           <select id="shelfInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2">
@@ -283,7 +299,7 @@
     <p>Copyright <span id="year"></span> Yaflix. All rights reserved.</p>
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("closeAlert").addEventListener("click", function () {
