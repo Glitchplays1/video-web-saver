@@ -43,7 +43,7 @@ let pendingFile = null;
 let library = loadMeta();
 function seedSamples() {
   const movies = ["Starlight Park", "River Rescue", "The Paper Plane", "Moon Market", "Captain Compass", "The Hidden Garden", "Cloud Racers", "Library Quest", "Sunny Harbor", "The Last Kite"];
-  const anime = ["Sky Club", "Noodle Heroes", "Robot Picnic", "Fox School", "Island Racers", "Tiny Dragons", "City of", "Paint Ninjas", "Train Spirits", "Pocket Giants"];
+  const anime = ["Frieren: Beyond Journey's End", "Jujutsu Kaisen", "One Piece", "Spy x Family", "The Seven Deadly Sins", "Dragon Ball Super", "Demon Slayer", "Detective Conan", "Solo Leveling", "Attack on Titan"];
   const series = ["Camp Cabin", "Team Telescope", "Bakery Street", "Scout Squad", "Harbor Friends", "Code Club", "Forest Post", "Music Room", "Rocket Recess", "Garden Detectives"];
   const have = new Set(library.map((item) => item.id));
   function addSet(names, shelf) {
