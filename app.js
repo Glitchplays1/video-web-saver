@@ -58,7 +58,7 @@ try { profiles = JSON.parse(localStorage.getItem(PROFILE_KEY) || "[]"); } catch 
 if (!Array.isArray(profiles)) profiles = [];
 
 function saveProfiles() {
-  const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "", rating: Number(p.rating) || 3 }));
+  const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "", rating: Number(p.rating) || 2, kids: Number(p.rating) <= 3 }));
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
 }
 function ratingName(level) {
@@ -88,7 +88,8 @@ function drawProfiles() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "w-28 text-slate-300 hover:text-white";
-    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span><span class="block text-xs text-slate-400">' + escapeHtml(ratingName(p.rating)) + '</span>';
+    const kind = Number(p.rating) <= 3 ? "Kids profile" : ratingName(p.rating);
+    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span><span class="block text-xs text-slate-400">' + escapeHtml(kind) + '</span>';
     const face = btn.querySelector("span");
     if (p.pic) {
       const img = document.createElement("img");
@@ -127,7 +128,17 @@ function drawProfiles() {
 }
 document.getElementById("ratingSlider").addEventListener("input", (e) => {
   document.getElementById("profileRating").value = e.target.value;
+  const kids = Number(e.target.value) <= 3;
   document.getElementById("ratingBlurb").textContent = "Only show titles rated " + ratingName(e.target.value) + " and below for this profile.";
+  document.getElementById("kidsNote").textContent = kids ? "Kids profile" : "Not a kids profile";
+});
+document.getElementById("profileNext").addEventListener("click", () => {
+  if (!document.getElementById("profileName").value.trim()) {
+    document.getElementById("profileName").focus();
+    return;
+  }
+  document.getElementById("profileStep1").classList.add("hidden");
+  document.getElementById("profileStep2").classList.remove("hidden");
 });
 document.getElementById("editProfiles").addEventListener("click", () => {
   editingProfiles = !editingProfiles;
@@ -164,12 +175,15 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
     name: name.slice(0, 16),
     color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
     pic: preview.src && preview.src.startsWith("data:") ? preview.src : "",
-    rating: Number(document.getElementById("profileRating").value) || 3,
+    rating: Number(document.getElementById("profileRating").value) || 2,
+    kids: Number(document.getElementById("profileRating").value) <= 3,
   });
   saveProfiles();
   e.target.reset();
   preview.classList.add("hidden");
   preview.removeAttribute("src");
+  document.getElementById("profileStep1").classList.remove("hidden");
+  document.getElementById("profileStep2").classList.add("hidden");
   e.target.classList.add("hidden");
   drawProfiles();
 });
