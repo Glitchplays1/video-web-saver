@@ -61,11 +61,34 @@ function saveProfiles() {
   const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "", rating: Number(p.rating) || 2, kids: Number(p.rating) <= 3 }));
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
 }
-function ratingName(level) {
-  const list = window.YAFLIX_RATINGS || [];
-  const found = list.find((item) => item.level === Number(level));
-  return found ? found.name : "PG";
+function ratingList() {
+  const list = Array.isArray(window.YAFLIX_RATINGS) ? window.YAFLIX_RATINGS : [];
+  return list.length ? list : [{ level: 1, name: "TV-Y", kids: true }];
 }
+function ratingName(level) {
+  const found = ratingList().find((item) => item.level === Number(level));
+  return found ? found.name : ratingList()[0].name;
+}
+function paintRatings() {
+  const list = ratingList();
+  const labels = document.getElementById("ratingLabels");
+  const slider = document.getElementById("ratingSlider");
+  const select = document.getElementById("ratingInput");
+  if (labels) {
+    labels.style.gridTemplateColumns = "repeat(" + list.length + ", minmax(0, 1fr))";
+    labels.innerHTML = list.map((item) => "<span>" + escapeHtml(item.name) + "</span>").join("");
+  }
+  if (slider) {
+    slider.min = list[0].level;
+    slider.max = list[list.length - 1].level;
+  }
+  if (select) {
+    const current = select.value;
+    select.innerHTML = list.map((item) => "<option value=\"" + item.level + "\">" + escapeHtml(item.name) + "</option>").join("");
+    if (current) select.value = current;
+  }
+}
+paintRatings();
 function currentRating() {
   const id = localStorage.getItem("yaflix-watching");
   const profile = profiles.find((p) => p.id === id);
