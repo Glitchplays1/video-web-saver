@@ -62,7 +62,9 @@ function saveProfiles() {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
 }
 function ratingName(level) {
-  return ["", "TV-Y", "TV-Y7", "G", "PG", "PG-13"][Number(level) || 4] || "PG";
+  const list = window.YAFLIX_RATINGS || [];
+  const found = list.find((item) => item.level === Number(level));
+  return found ? found.name : "PG";
 }
 function currentRating() {
   const id = localStorage.getItem("yaflix-watching");
