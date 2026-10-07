@@ -51,7 +51,12 @@ function seedSamples() {
       const id = "sample-" + shelf.toLowerCase() + "-" + (index + 1);
       if (have.has(id)) {
         const existing = library.find((item) => item.id === id);
-        if (existing && !existing.thumbUrl) existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png";
+        if (existing) {
+          existing.title = title;
+          existing.shelf = shelf;
+          existing.tag = shelf;
+          existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png";
+        }
         return;
       }
       library.push({
