@@ -41,6 +41,44 @@ const els = {
 let mode = "link";
 let pendingFile = null;
 let library = loadMeta();
+function seedSamples() {
+  const movies = ["Starlight Park", "River Rescue", "The Paper Plane", "Moon Market", "Captain Compass", "The Hidden Garden", "Cloud Racers", "Library Quest", "Sunny Harbor", "The Last Kite"];
+  const anime = ["Sky Club", "Noodle Heroes", "Robot Picnic", "Fox School", "Island Racers", "Tiny Dragons", "City of", "Paint Ninjas", "Train Spirits", "Pocket Giants"];
+  const series = ["Camp Cabin", "Team Telescope", "Bakery Street", "Scout Squad", "Harbor Friends", "Code Club", "Forest Post", "Music Room", "Rocket Recess", "Garden Detectives"];
+  const have = new Set(library.map((item) => item.id));
+  function addSet(names, shelf) {
+    names.forEach((title, index) => {
+      const id = "sample-" + shelf.toLowerCase() + "-" + (index + 1);
+      if (have.has(id)) return;
+      library.push({
+        id,
+        title,
+        tag: shelf,
+        shelf,
+        show: "",
+        season: 0,
+        episode: 0,
+        actors: "Sample cast",
+        minutes: 22,
+        notes: "A sample " + shelf.toLowerCase() + " card. Add your own video to play it.",
+        type: "link",
+        url: "",
+        thumbUrl: "",
+        poster: "",
+        fileName: "",
+        size: 0,
+        rating: 2,
+        favorite: false,
+        createdAt: new Date(Date.now() - index * 1000).toISOString(),
+      });
+    });
+  }
+  addSet(movies, "Movies");
+  addSet(anime, "Anime");
+  addSet(series, "Series");
+  try { saveMeta(); } catch { /* samples still show this visit */ }
+}
+seedSamples();
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
