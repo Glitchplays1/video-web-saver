@@ -81,6 +81,27 @@ function closeWho() {
   screen.classList.add("hidden");
   screen.classList.remove("flex");
 }
+let editingId = null;
+function openProfileForm(profile) {
+  editingId = profile ? profile.id : null;
+  document.getElementById("profileForm").classList.remove("hidden");
+  document.getElementById("profileStep1").classList.remove("hidden");
+  document.getElementById("profileStep2").classList.add("hidden");
+  document.getElementById("profileName").value = profile ? profile.name : "";
+  const preview = document.getElementById("profilePreview");
+  if (profile && profile.pic) {
+    preview.src = profile.pic;
+    preview.classList.remove("hidden");
+  } else {
+    preview.classList.add("hidden");
+    preview.removeAttribute("src");
+  }
+  const rating = profile ? Number(profile.rating) || 2 : 2;
+  document.getElementById("ratingSlider").value = rating;
+  document.getElementById("profileRating").value = rating;
+  document.getElementById("kidsNote").textContent = rating <= 3 ? "Kids profile" : "Not a kids profile";
+  document.getElementById("profileRemove").classList.toggle("hidden", !profile);
+}
 function drawProfiles() {
   const row = document.getElementById("profileRow");
   row.innerHTML = "";
@@ -103,9 +124,7 @@ function drawProfiles() {
     }
     btn.addEventListener("click", () => {
       if (editingProfiles) {
-        profiles = profiles.filter((item) => item.id !== p.id);
-        saveProfiles();
-        drawProfiles();
+        openProfileForm(p);
         return;
       }
       localStorage.setItem("yaflix-watching", p.id);
@@ -122,7 +141,7 @@ function drawProfiles() {
   add.type = "button";
   add.className = "w-28 text-slate-300";
   add.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center rounded-md bg-slate-800 text-5xl">+</span><span class="mt-2 block">Add Profile</span>';
-  add.addEventListener("click", () => document.getElementById("profileForm").classList.remove("hidden"));
+  add.addEventListener("click", () => openProfileForm(null));
   row.appendChild(add);
   document.getElementById("editProfiles").textContent = editingProfiles ? "DONE" : "EDIT PROFILES";
 }
@@ -170,14 +189,27 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
   const name = document.getElementById("profileName").value.trim();
   if (!name) return;
   const preview = document.getElementById("profilePreview");
-  profiles.push({
-    id: uid(),
-    name: name.slice(0, 16),
-    color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
-    pic: preview.src && preview.src.startsWith("data:") ? preview.src : "",
-    rating: Number(document.getElementById("profileRating").value) || 2,
-    kids: Number(document.getElementById("profileRating").value) <= 3,
-  });
+  const pic = preview.src && preview.src.startsWith("data:") ? preview.src : "";
+  const rating = Number(document.getElementById("profileRating").value) || 2;
+  if (editingId) {
+    const profile = profiles.find((item) => item.id === editingId);
+    if (profile) {
+      profile.name = name.slice(0, 16);
+      profile.rating = rating;
+      profile.kids = rating <= 3;
+      if (pic) profile.pic = pic;
+    }
+  } else {
+    profiles.push({
+      id: uid(),
+      name: name.slice(0, 16),
+      color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
+      pic,
+      rating,
+      kids: rating <= 3,
+    });
+  }
+  editingId = null;
   saveProfiles();
   e.target.reset();
   preview.classList.add("hidden");
@@ -187,7 +219,14 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
   e.target.classList.add("hidden");
   drawProfiles();
 });
-document.getElementById("switchProfile").addEventListener("click", openWho);
+document.getElementById("profileRemove").addEventListener("click", () => {
+  if (!editingId) return;
+  profiles = profiles.filter((item) => item.id !== editingId);
+  editingId = null;
+  saveProfiles();
+  document.getElementById("profileForm").classList.add("hidden");
+  drawProfiles();
+});
 
 els.menuBtn.addEventListener("click", () => {
   const open = els.siteNav.classList.toggle("max-md:flex");
