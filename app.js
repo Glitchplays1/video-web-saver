@@ -550,9 +550,9 @@ els.form.addEventListener("submit", async (e) => {
       title,
       tag: els.tag.value.trim(),
       shelf: shelfEl ? shelfEl.value : "Other",
-      show: shelfEl && shelfEl.value === "Series" ? showName : "",
-      season: shelfEl && shelfEl.value === "Series" ? season : 0,
-      episode: shelfEl && shelfEl.value === "Series" ? episode : 0,
+      show: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? showName : "",
+      season: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? season : 0,
+      episode: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? episode : 0,
       actors: document.getElementById("actorsInput").value.trim(),
       minutes: Number(document.getElementById("minutesInput").value) || 0,
       notes: els.notes.value.trim(),
@@ -617,6 +617,7 @@ function filtered() {
     let kindOk = kind === "all" || (kind === "fav" ? item.favorite : item.type === kind);
     if (kind === "movies") kindOk = shelf.includes("movie");
     if (kind === "series") kindOk = shelf.includes("series");
+    if (kind === "anime") kindOk = shelf.includes("anime");
     const text = (item.title + " " + item.show + " " + item.notes + " " + item.tag + " " + item.shelf + " " + item.url + " " + item.fileName).toLowerCase();
     const ratingOk = (Number(item.rating) || 3) <= currentRating();
     return kindOk && ratingOk && text.includes(q);
@@ -1027,7 +1028,7 @@ document.getElementById("seriesList").addEventListener("click", async (e) => {
   }
 });
 document.getElementById("shelfInput").addEventListener("change", (e) => {
-  document.getElementById("seriesFields").hidden = e.target.value !== "Series";
+  document.getElementById("seriesFields").hidden = e.target.value !== "Series" && e.target.value !== "Anime";
 });
 
 let previewTimer = null;

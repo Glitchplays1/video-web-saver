@@ -81,6 +81,7 @@
       <button type="button" class="cat rounded-lg px-3 py-2 text-blue-200" data-filter="all">All</button>
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="movies">Movies</button>
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="series">Series</button>
+      <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="anime">Anime</button>
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="file">Files</button>
       <button type="button" class="cat rounded-lg px-3 py-2 hover:text-blue-200" data-filter="fav">Favorites</button>
       <button type="button" class="view-link rounded-lg px-3 py-2 hover:text-blue-200" data-view="add">Add</button>
@@ -155,6 +156,7 @@
           <select id="shelfInput" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2">
             <option>Movies</option>
             <option>Series</option>
+            <option>Anime</option>
             <option>Other</option>
           </select>
         </label>
@@ -222,6 +224,7 @@
         <option value="fav">Favorites</option>
         <option value="movies">Movies</option>
         <option value="series">Series</option>
+        <option value="anime">Anime</option>
       </select>
       <select id="sortSelect" class="rounded-lg border border-slate-600 bg-ink px-3 py-2" aria-label="Sort">
         <option value="new">Newest</option>
@@ -307,7 +310,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("closeAlert").addEventListener("click", function () {
