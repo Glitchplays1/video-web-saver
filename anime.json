@@ -1,0 +1,62 @@
+[
+  {
+    "id": "sample-anime-1",
+    "title": "Sky Club",
+    "shelf": "Anime",
+    "pic": "posters/anime-1.png"
+  },
+  {
+    "id": "sample-anime-2",
+    "title": "Noodle Heroes",
+    "shelf": "Anime",
+    "pic": "posters/anime-2.png"
+  },
+  {
+    "id": "sample-anime-3",
+    "title": "Robot Picnic",
+    "shelf": "Anime",
+    "pic": "posters/anime-3.png"
+  },
+  {
+    "id": "sample-anime-4",
+    "title": "Fox School",
+    "shelf": "Anime",
+    "pic": "posters/anime-4.png"
+  },
+  {
+    "id": "sample-anime-5",
+    "title": "Island Racers",
+    "shelf": "Anime",
+    "pic": "posters/anime-5.png"
+  },
+  {
+    "id": "sample-anime-6",
+    "title": "Tiny Dragons",
+    "shelf": "Anime",
+    "pic": "posters/anime-6.png"
+  },
+  {
+    "id": "sample-anime-7",
+    "title": "City Sparks",
+    "shelf": "Anime",
+    "pic": "posters/anime-7.png"
+  },
+  {
+    "id": "sample-anime-8",
+    "title": "Paint Ninjas",
+    "shelf": "Anime",
+    "pic": "posters/anime-8.png"
+  },
+  {
+    "id": "sample-anime-9",
+    "title": "Train Spirits",
+    "shelf": "Anime",
+    "pic": "posters/anime-9.png"
+  },
+  {
+    "id": "sample-anime-10",
+    "title": "Pocket Giants",
+    "shelf": "Anime",
+    "pic": "posters/anime-10.png"
+  }
+]

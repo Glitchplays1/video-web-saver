@@ -1,0 +1,62 @@
+[
+  {
+    "id": "sample-movies-1",
+    "title": "Starlight Park",
+    "shelf": "Movies",
+    "pic": "posters/movies-1.png"
+  },
+  {
+    "id": "sample-movies-2",
+    "title": "River Rescue",
+    "shelf": "Movies",
+    "pic": "posters/movies-2.png"
+  },
+  {
+    "id": "sample-movies-3",
+    "title": "The Paper Plane",
+    "shelf": "Movies",
+    "pic": "posters/movies-3.png"
+  },
+  {
+    "id": "sample-movies-4",
+    "title": "Moon Market",
+    "shelf": "Movies",
+    "pic": "posters/movies-4.png"
+  },
+  {
+    "id": "sample-movies-5",
+    "title": "Captain Compass",
+    "shelf": "Movies",
+    "pic": "posters/movies-5.png"
+  },
+  {
+    "id": "sample-movies-6",
+    "title": "The Hidden Garden",
+    "shelf": "Movies",
+    "pic": "posters/movies-6.png"
+  },
+  {
+    "id": "sample-movies-7",
+    "title": "Cloud Racers",
+    "shelf": "Movies",
+    "pic": "posters/movies-7.png"
+  },
+  {
+    "id": "sample-movies-8",
+    "title": "Library Quest",
+    "shelf": "Movies",
+    "pic": "posters/movies-8.png"
+  },
+  {
+    "id": "sample-movies-9",
+    "title": "Sunny Harbor",
+    "shelf": "Movies",
+    "pic": "posters/movies-9.png"
+  },
+  {
+    "id": "sample-movies-10",
+    "title": "The Last Kite",
+    "shelf": "Movies",
+    "pic": "posters/movies-10.png"
+  }
+]
