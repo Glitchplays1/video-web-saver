@@ -64,7 +64,7 @@
           <input id="profileRating" type="hidden" value="2" />
         </div>
         <p id="kidsNote" class="mt-3 text-center text-sm text-emerald-300">Kids profile</p>
-        <button class="mt-4 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Done</button>
+        <button id="profileDone" class="mt-4 w-full rounded-md bg-blue-600 py-2 font-bold text-white" type="submit">Done</button>
       </div>
     </form>
   </div>
@@ -307,7 +307,7 @@
     <p>Copyright <span id="year"></span> Yaflix. All rights reserved.</p>
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     document.getElementById("closeAlert").addEventListener("click", function () {
