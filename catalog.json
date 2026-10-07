@@ -1,0 +1,182 @@
+[
+  {
+    "id": "sample-movies-1",
+    "title": "Starlight Park",
+    "shelf": "Movies",
+    "pic": "posters/movies-1.png"
+  },
+  {
+    "id": "sample-movies-2",
+    "title": "River Rescue",
+    "shelf": "Movies",
+    "pic": "posters/movies-2.png"
+  },
+  {
+    "id": "sample-movies-3",
+    "title": "The Paper Plane",
+    "shelf": "Movies",
+    "pic": "posters/movies-3.png"
+  },
+  {
+    "id": "sample-movies-4",
+    "title": "Moon Market",
+    "shelf": "Movies",
+    "pic": "posters/movies-4.png"
+  },
+  {
+    "id": "sample-movies-5",
+    "title": "Captain Compass",
+    "shelf": "Movies",
+    "pic": "posters/movies-5.png"
+  },
+  {
+    "id": "sample-movies-6",
+    "title": "The Hidden Garden",
+    "shelf": "Movies",
+    "pic": "posters/movies-6.png"
+  },
+  {
+    "id": "sample-movies-7",
+    "title": "Cloud Racers",
+    "shelf": "Movies",
+    "pic": "posters/movies-7.png"
+  },
+  {
+    "id": "sample-movies-8",
+    "title": "Library Quest",
+    "shelf": "Movies",
+    "pic": "posters/movies-8.png"
+  },
+  {
+    "id": "sample-movies-9",
+    "title": "Sunny Harbor",
+    "shelf": "Movies",
+    "pic": "posters/movies-9.png"
+  },
+  {
+    "id": "sample-movies-10",
+    "title": "The Last Kite",
+    "shelf": "Movies",
+    "pic": "posters/movies-10.png"
+  },
+  {
+    "id": "sample-anime-1",
+    "title": "Sky Club",
+    "shelf": "Anime",
+    "pic": "posters/anime-1.png"
+  },
+  {
+    "id": "sample-anime-2",
+    "title": "Noodle Heroes",
+    "shelf": "Anime",
+    "pic": "posters/anime-2.png"
+  },
+  {
+    "id": "sample-anime-3",
+    "title": "Robot Picnic",
+    "shelf": "Anime",
+    "pic": "posters/anime-3.png"
+  },
+  {
+    "id": "sample-anime-4",
+    "title": "Fox School",
+    "shelf": "Anime",
+    "pic": "posters/anime-4.png"
+  },
+  {
+    "id": "sample-anime-5",
+    "title": "Island Racers",
+    "shelf": "Anime",
+    "pic": "posters/anime-5.png"
+  },
+  {
+    "id": "sample-anime-6",
+    "title": "Tiny Dragons",
+    "shelf": "Anime",
+    "pic": "posters/anime-6.png"
+  },
+  {
+    "id": "sample-anime-7",
+    "title": "City Sparks",
+    "shelf": "Anime",
+    "pic": "posters/anime-7.png"
+  },
+  {
+    "id": "sample-anime-8",
+    "title": "Paint Ninjas",
+    "shelf": "Anime",
+    "pic": "posters/anime-8.png"
+  },
+  {
+    "id": "sample-anime-9",
+    "title": "Train Spirits",
+    "shelf": "Anime",
+    "pic": "posters/anime-9.png"
+  },
+  {
+    "id": "sample-anime-10",
+    "title": "Pocket Giants",
+    "shelf": "Anime",
+    "pic": "posters/anime-10.png"
+  },
+  {
+    "id": "sample-series-1",
+    "title": "Camp Cabin",
+    "shelf": "Series",
+    "pic": "posters/series-1.png"
+  },
+  {
+    "id": "sample-series-2",
+    "title": "Team Telescope",
+    "shelf": "Series",
+    "pic": "posters/series-2.png"
+  },
+  {
+    "id": "sample-series-3",
+    "title": "Bakery Street",
+    "shelf": "Series",
+    "pic": "posters/series-3.png"
+  },
+  {
+    "id": "sample-series-4",
+    "title": "Scout Squad",
+    "shelf": "Series",
+    "pic": "posters/series-4.png"
+  },
+  {
+    "id": "sample-series-5",
+    "title": "Harbor Friends",
+    "shelf": "Series",
+    "pic": "posters/series-5.png"
+  },
+  {
+    "id": "sample-series-6",
+    "title": "Code Club",
+    "shelf": "Series",
+    "pic": "posters/series-6.png"
+  },
+  {
+    "id": "sample-series-7",
+    "title": "Forest Post",
+    "shelf": "Series",
+    "pic": "posters/series-7.png"
+  },
+  {
+    "id": "sample-series-8",
+    "title": "Music Room",
+    "shelf": "Series",
+    "pic": "posters/series-8.png"
+  },
+  {
+    "id": "sample-series-9",
+    "title": "Rocket Recess",
+    "shelf": "Series",
+    "pic": "posters/series-9.png"
+  },
+  {
+    "id": "sample-series-10",
+    "title": "Garden Detectives",
+    "shelf": "Series",
+    "pic": "posters/series-10.png"
+  }
+]

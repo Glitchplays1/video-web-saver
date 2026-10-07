@@ -49,7 +49,11 @@ function seedSamples() {
   function addSet(names, shelf) {
     names.forEach((title, index) => {
       const id = "sample-" + shelf.toLowerCase() + "-" + (index + 1);
-      if (have.has(id)) return;
+      if (have.has(id)) {
+        const existing = library.find((item) => item.id === id);
+        if (existing && !existing.thumbUrl) existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png";
+        return;
+      }
       library.push({
         id,
         title,
@@ -63,7 +67,7 @@ function seedSamples() {
         notes: "A sample " + shelf.toLowerCase() + " card. Add your own video to play it.",
         type: "link",
         url: "",
-        thumbUrl: "",
+        thumbUrl: "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png",
         poster: "",
         fileName: "",
         size: 0,
