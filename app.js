@@ -72,7 +72,7 @@ function seedSamples() {
         notes: "A sample " + shelf.toLowerCase() + " card. Add your own video to play it.",
         type: "link",
         url: "",
-        thumbUrl: "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png",
+        thumbUrl: "posters/" + shelf.toLowerCase() + "-" + (index + 1) + (shelf === "Anime" ? ".jpg" : ".png"),
         poster: "",
         fileName: "",
         size: 0,
