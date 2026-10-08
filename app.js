@@ -43,7 +43,7 @@ let pendingFile = null;
 let library = loadMeta();
 function seedSamples() {
   const movies = ["Starlight Park", "River Rescue", "The Paper Plane", "Moon Market", "Captain Compass", "The Hidden Garden", "Cloud Racers", "Library Quest", "Sunny Harbor", "The Last Kite"];
-  const anime = ["Frieren: Beyond Journey's End", "Jujutsu Kaisen", "One Piece", "Spy x Family", "The Seven Deadly Sins", "Dragon Ball Super", "Demon Slayer", "Detective Conan", "Solo Leveling", "Attack on Titan"];
+  const anime = ["Sky Club", "Noodle Heroes", "Robot Picnic", "Fox School", "Island Racers", "Tiny Dragons", "City Sparks", "Paint Ninjas", "Train Spirits", "Pocket Giants"];
   const series = ["Camp Cabin", "Team Telescope", "Bakery Street", "Scout Squad", "Harbor Friends", "Code Club", "Forest Post", "Music Room", "Rocket Recess", "Garden Detectives"];
   const have = new Set(library.map((item) => item.id));
   function addSet(names, shelf) {
@@ -55,7 +55,7 @@ function seedSamples() {
           existing.title = title;
           existing.shelf = shelf;
           existing.tag = shelf;
-          existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png";
+          existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + (shelf === "Anime" ? ".jpg" : ".png");
         }
         return;
       }
