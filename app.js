@@ -99,9 +99,7 @@ function addSet(names, shelf) {
       });
     });
   }
-  addSet(movies, "Movies");
   addSet(anime, "Anime");
-  addSet(series, "Series");
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
@@ -133,7 +131,7 @@ function applyFile(rows, shelf) {
     item.thumbUrl = row.pic || item.thumbUrl || "";
   });
   const prefix = "sample-" + shelf.toLowerCase() + "-";
-  library = library.filter((item) => item.shelf !== shelf || ids.has(item.id) || !String(item.id).startsWith(prefix));
+  library = library.filter((item) => ids.has(item.id) || (item.shelf !== shelf && !String(item.id).startsWith(prefix)));
 }
 function applyCatalog(file, shelf) {
   return fetch(file)
