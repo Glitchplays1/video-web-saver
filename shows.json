@@ -3,60 +3,60 @@
     "id": "sample-series-1",
     "title": "Camp Cabin",
     "shelf": "Series",
-    "pic": "posters/shows/1.png"
+    "pic": "posters/shows/shows-1.png"
   },
   {
     "id": "sample-series-2",
     "title": "Team Telescope",
     "shelf": "Series",
-    "pic": "posters/shows/2.png"
+    "pic": "posters/shows/shows-2.png"
   },
   {
     "id": "sample-series-3",
     "title": "Bakery Street",
     "shelf": "Series",
-    "pic": "posters/shows/3.png"
+    "pic": "posters/shows/shows-3.png"
   },
   {
     "id": "sample-series-4",
     "title": "Scout Squad",
     "shelf": "Series",
-    "pic": "posters/shows/4.png"
+    "pic": "posters/shows/shows-4.png"
   },
   {
     "id": "sample-series-5",
     "title": "Harbor Friends",
     "shelf": "Series",
-    "pic": "posters/shows/5.png"
+    "pic": "posters/shows/shows-5.png"
   },
   {
     "id": "sample-series-6",
     "title": "Code Club",
     "shelf": "Series",
-    "pic": "posters/shows/6.png"
+    "pic": "posters/shows/shows-6.png"
   },
   {
     "id": "sample-series-7",
     "title": "Forest Post",
     "shelf": "Series",
-    "pic": "posters/shows/7.png"
+    "pic": "posters/shows/shows-7.png"
   },
   {
     "id": "sample-series-8",
     "title": "Music Room",
     "shelf": "Series",
-    "pic": "posters/shows/8.png"
+    "pic": "posters/shows/shows-8.png"
   },
   {
     "id": "sample-series-9",
     "title": "Rocket Recess",
     "shelf": "Series",
-    "pic": "posters/shows/9.png"
+    "pic": "posters/shows/shows-9.png"
   },
   {
     "id": "sample-series-10",
     "title": "Garden Detectives",
     "shelf": "Series",
-    "pic": "posters/shows/10.png"
+    "pic": "posters/shows/shows-10.png"
   }
 ]

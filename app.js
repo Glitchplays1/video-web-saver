@@ -46,8 +46,22 @@ function seedSamples() {
   const anime = ["Sky Club", "Noodle Heroes", "Robot Picnic", "Fox School", "Island Racers", "Tiny Dragons", "City Sparks", "Paint Ninjas", "Train Spirits", "Pocket Giants"];
   const series = ["Camp Cabin", "Team Telescope", "Bakery Street", "Scout Squad", "Harbor Friends", "Code Club", "Forest Post", "Music Room", "Rocket Recess", "Garden Detectives"];
   const have = new Set(library.map((item) => item.id));
-  function addSet(names, shelf) {
-    names.forEach((title, index) => {
+  function posterPath(shelf, number) {
+  const folder = shelf === "Series" ? "shows" : shelf.toLowerCase();
+  return "posters/" + folder + "/" + folder + "-" + number + ".png";
+}
+function posterFallbacks(src) {
+  const list = [src];
+  if (src.includes("/anime/anime-")) list.push(src.replace("/anime/anime-", "/anime/"));
+  if (src.includes("/movies/movies-")) list.push(src.replace("/movies/movies-", "/movies/"));
+  if (src.includes("/shows/shows-")) list.push(src.replace("/shows/shows-", "/shows/"));
+  if (/\/anime\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/anime-$1.png"));
+  if (/\/movies\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/movies-$1.png"));
+  if (/\/shows\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/shows-$1.png"));
+  return list;
+}
+function addSet(names, shelf) {
+  names.forEach((title, index) => {
       const id = "sample-" + shelf.toLowerCase() + "-" + (index + 1);
       if (have.has(id)) {
         const existing = library.find((item) => item.id === id);
@@ -55,7 +69,7 @@ function seedSamples() {
           existing.title = title;
           existing.shelf = shelf;
           existing.tag = shelf;
-          existing.thumbUrl = "posters/" + (shelf === "Series" ? "shows" : shelf.toLowerCase()) + "/" + (index + 1) + ".png";
+          existing.thumbUrl = posterPath(shelf, index + 1);
         }
         return;
       }
@@ -72,7 +86,7 @@ function seedSamples() {
         notes: "A sample " + shelf.toLowerCase() + " card. Add your own video to play it.",
         type: "link",
         url: "",
-        thumbUrl: "posters/" + (shelf === "Series" ? "shows" : shelf.toLowerCase()) + "/" + (index + 1) + ".png",
+        thumbUrl: posterPath(shelf, index + 1),
         poster: "",
         fileName: "",
         size: 0,
@@ -734,7 +748,14 @@ function render(highlightId) {
       '</div>';
     const img = card.querySelector("img");
     img.src = pic || posterDataUrl(item.title);
-    img.addEventListener("error", () => { img.src = posterDataUrl(item.title); });
+    img.dataset.tries = "0";
+    img.addEventListener("error", () => {
+      const tries = posterFallbacks(pic);
+      const next = Number(img.dataset.tries) + 1;
+      img.dataset.tries = String(next);
+      if (tries[next]) img.src = tries[next];
+      else img.src = posterDataUrl(item.title);
+    });
     els.cards.appendChild(card);
     if (!item.thumbUrl && item.type === "file") fillStoredThumb(item);
   });
