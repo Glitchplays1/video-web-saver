@@ -103,6 +103,17 @@ function addSet(names, shelf) {
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
+const removedMovies = ["Starlight Park", "River Rescue", "The Paper Plane", "Moon Market", "Captain Compass", "The Hidden Garden", "Cloud Racers", "Library Quest", "Sunny Harbor", "The Last Kite"];
+const removedShows = ["Camp Cabin", "Team Telescope", "Bakery Street", "Scout Squad", "Harbor Friends", "Code Club", "Forest Post", "Music Room", "Rocket Recess", "Garden Detectives"];
+library = library.filter((item) => {
+  const title = item.title || "";
+  const id = String(item.id || "");
+  if (id.startsWith("sample-movies-") || id.startsWith("sample-series-")) return false;
+  if (removedMovies.includes(title) || removedShows.includes(title)) return false;
+  if (item.shelf === "Movies" || item.shelf === "Series") return false;
+  return true;
+});
+try { saveMeta(); } catch { /* cards still hidden this visit */ }
 function applyFile(rows, shelf) {
   const ids = new Set();
   rows.forEach((row, index) => {
