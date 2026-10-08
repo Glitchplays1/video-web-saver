@@ -105,10 +105,10 @@ function addSet(names, shelf) {
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
-function applyAnimeFile(rows) {
+function applyFile(rows, shelf) {
   const ids = new Set();
   rows.forEach((row, index) => {
-    const id = row.id || "anime-file-" + (index + 1);
+    const id = row.id || shelf.toLowerCase() + "-file-" + (index + 1);
     ids.add(id);
     let item = library.find((entry) => entry.id === id);
     if (!item) {
@@ -126,34 +126,29 @@ function applyAnimeFile(rows) {
       };
       library.push(item);
     }
-    item.title = row.title || item.title || "Anime";
-    item.shelf = "Anime";
-    item.tag = "Anime";
+    item.title = row.title || item.title || shelf;
+    item.shelf = row.shelf || shelf;
+    item.tag = item.shelf;
     item.show = "";
     item.thumbUrl = row.pic || item.thumbUrl || "";
   });
-  library = library.filter((item) => item.shelf !== "Anime" || ids.has(item.id) || !String(item.id).startsWith("sample-anime-"));
+  const prefix = "sample-" + shelf.toLowerCase() + "-";
+  library = library.filter((item) => item.shelf !== shelf || ids.has(item.id) || !String(item.id).startsWith(prefix));
 }
-function applyCatalog(file) {
+function applyCatalog(file, shelf) {
   return fetch(file)
     .then((res) => res.json())
     .then((rows) => {
       if (!Array.isArray(rows)) return;
-      if (file === "anime.json") {
-        applyAnimeFile(rows);
-        return;
-      }
-      rows.forEach((row) => {
-        const item = library.find((entry) => entry.id === row.id);
-        if (!item) return;
-        if (row.title) item.title = row.title;
-        if (row.pic) item.thumbUrl = row.pic;
-        if (row.shelf) item.shelf = row.shelf;
-      });
+      applyFile(rows, shelf);
     })
     .catch(() => {});
 }
-Promise.all([applyCatalog("anime.json"), applyCatalog("movies.json"), applyCatalog("shows.json")]).then(() => {
+Promise.all([
+  applyCatalog("anime.json", "Anime"),
+  applyCatalog("movies.json", "Movies"),
+  applyCatalog("shows.json", "Series")
+]).then(() => {
   saveMeta();
   render();
 });
