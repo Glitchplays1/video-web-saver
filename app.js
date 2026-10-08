@@ -55,7 +55,7 @@ function seedSamples() {
           existing.title = title;
           existing.shelf = shelf;
           existing.tag = shelf;
-          existing.thumbUrl = "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png";
+          existing.thumbUrl = "posters/" + (shelf === "Series" ? "shows" : shelf.toLowerCase()) + "/" + (index + 1) + ".png";
         }
         return;
       }
@@ -72,7 +72,7 @@ function seedSamples() {
         notes: "A sample " + shelf.toLowerCase() + " card. Add your own video to play it.",
         type: "link",
         url: "",
-        thumbUrl: "posters/" + shelf.toLowerCase() + "-" + (index + 1) + ".png",
+        thumbUrl: "posters/" + (shelf === "Series" ? "shows" : shelf.toLowerCase()) + "/" + (index + 1) + ".png",
         poster: "",
         fileName: "",
         size: 0,
