@@ -105,6 +105,20 @@ function addSet(names, shelf) {
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
+fetch("anime.json")
+  .then((res) => res.json())
+  .then((rows) => {
+    if (!Array.isArray(rows)) return;
+    rows.forEach((row) => {
+      const item = library.find((entry) => entry.id === row.id);
+      if (!item || !row.pic) return;
+      item.thumbUrl = row.pic;
+      item.title = row.title || item.title;
+    });
+    saveMeta();
+    render();
+  })
+  .catch(() => {});
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
