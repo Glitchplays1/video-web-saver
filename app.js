@@ -51,13 +51,16 @@ function seedSamples() {
   return "posters/" + folder + "/" + folder + "-" + number + ".png";
 }
 function posterFallbacks(src) {
+  const match = src.match(/(\d+)\.png$/);
+  const n = match ? match[1] : "";
   const list = [src];
-  if (src.includes("/anime/anime-")) list.push(src.replace("/anime/anime-", "/anime/"));
-  if (src.includes("/movies/movies-")) list.push(src.replace("/movies/movies-", "/movies/"));
-  if (src.includes("/shows/shows-")) list.push(src.replace("/shows/shows-", "/shows/"));
-  if (/\/anime\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/anime-$1.png"));
-  if (/\/movies\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/movies-$1.png"));
-  if (/\/shows\/\d+\.png$/.test(src)) list.push(src.replace(/\/(\d+)\.png$/, "/shows-$1.png"));
+  if (n) {
+    list.push("posters/anime/anime-" + n + ".png");
+    list.push("posters/anime-" + n + ".png");
+    list.push("anime-" + n + ".png");
+    list.push("posters/movies/movies-" + n + ".png");
+    list.push("posters/shows/shows-" + n + ".png");
+  }
   return list;
 }
 function addSet(names, shelf) {
