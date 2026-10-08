@@ -69,7 +69,7 @@ function addSet(names, shelf) {
       if (have.has(id)) {
         const existing = library.find((item) => item.id === id);
         if (existing) {
-          existing.title = title;
+          if (shelf !== "Anime") existing.title = title;
           existing.shelf = shelf;
           existing.tag = shelf;
           existing.thumbUrl = posterPath(shelf, index + 1);
@@ -105,20 +105,25 @@ function addSet(names, shelf) {
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
-fetch("anime.json")
-  .then((res) => res.json())
-  .then((rows) => {
-    if (!Array.isArray(rows)) return;
-    rows.forEach((row) => {
-      const item = library.find((entry) => entry.id === row.id);
-      if (!item || !row.pic) return;
-      item.thumbUrl = row.pic;
-      item.title = row.title || item.title;
-    });
-    saveMeta();
-    render();
-  })
-  .catch(() => {});
+function applyCatalog(file) {
+  return fetch(file)
+    .then((res) => res.json())
+    .then((rows) => {
+      if (!Array.isArray(rows)) return;
+      rows.forEach((row) => {
+        const item = library.find((entry) => entry.id === row.id);
+        if (!item) return;
+        if (row.title) item.title = row.title;
+        if (row.pic) item.thumbUrl = row.pic;
+        if (row.shelf) item.shelf = row.shelf;
+      });
+    })
+    .catch(() => {});
+}
+Promise.all([applyCatalog("anime.json"), applyCatalog("movies.json"), applyCatalog("shows.json")]).then(() => {
+  saveMeta();
+  render();
+});
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
