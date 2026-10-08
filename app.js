@@ -105,11 +105,44 @@ function addSet(names, shelf) {
   try { saveMeta(); } catch { /* samples still show this visit */ }
 }
 seedSamples();
+function applyAnimeFile(rows) {
+  const ids = new Set();
+  rows.forEach((row, index) => {
+    const id = row.id || "anime-file-" + (index + 1);
+    ids.add(id);
+    let item = library.find((entry) => entry.id === id);
+    if (!item) {
+      item = {
+        id,
+        type: "link",
+        url: "",
+        fileName: "",
+        size: 0,
+        favorite: false,
+        rating: 2,
+        actors: "",
+        notes: "",
+        createdAt: new Date().toISOString()
+      };
+      library.push(item);
+    }
+    item.title = row.title || item.title || "Anime";
+    item.shelf = "Anime";
+    item.tag = "Anime";
+    item.show = "";
+    item.thumbUrl = row.pic || item.thumbUrl || "";
+  });
+  library = library.filter((item) => item.shelf !== "Anime" || ids.has(item.id) || !String(item.id).startsWith("sample-anime-"));
+}
 function applyCatalog(file) {
   return fetch(file)
     .then((res) => res.json())
     .then((rows) => {
       if (!Array.isArray(rows)) return;
+      if (file === "anime.json") {
+        applyAnimeFile(rows);
+        return;
+      }
       rows.forEach((row) => {
         const item = library.find((entry) => entry.id === row.id);
         if (!item) return;
