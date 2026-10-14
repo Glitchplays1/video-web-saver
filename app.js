@@ -140,6 +140,8 @@ function applyFile(rows, shelf) {
     item.tag = item.shelf;
     item.show = "";
     item.thumbUrl = row.pic || item.thumbUrl || "";
+    const number = String(id).match(/(\d+)$/);
+    if (shelf === "Anime" && number) item.url = "videos/anime/anime-" + number[1] + ".mp4";
   });
   const prefix = "sample-" + shelf.toLowerCase() + "-";
   library = library.filter((item) => ids.has(item.id) || (item.shelf !== shelf && !String(item.id).startsWith(prefix)));
