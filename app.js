@@ -157,6 +157,7 @@ function applyFile(rows, shelf) {
       ];
       const folder = folders[n - 1] || ("anime-" + n);
       item.url = "videos/anime/" + folder + "/video.mp4";
+      if (n === 4) item.show = item.title;
     }
   });
   const prefix = "sample-" + shelf.toLowerCase() + "-";
@@ -176,9 +177,33 @@ Promise.all([
   applyCatalog("movies.json", "Movies"),
   applyCatalog("shows.json", "Series")
 ]).then(() => {
+  addAnimeSeasons();
   saveMeta();
   render();
 });
+function addAnimeSeasons() {
+  const show = "The Seven Deadly Sins";
+  const poster = "posters/anime/anime-4.png";
+  for (let season = 1; season <= 5; season += 1) {
+    for (let episode = 1; episode <= 10; episode += 1) {
+      const id = "anime-04-s" + season + "e" + episode;
+      let item = library.find((entry) => entry.id === id);
+      if (!item) {
+        item = { id, type: "link", fileName: "", size: 0, favorite: false, rating: 2, actors: "", createdAt: new Date().toISOString() };
+        library.push(item);
+      }
+      item.title = "Episode " + episode;
+      item.show = show;
+      item.shelf = "Anime";
+      item.tag = "Anime";
+      item.season = season;
+      item.episode = episode;
+      item.notes = "Season " + season + ", episode " + episode;
+      item.thumbUrl = poster;
+      item.url = "videos/anime/04-the-seven-deadly-sins/season-" + season + "/episode-" + episode + ".mp4";
+    }
+  }
+}
 
 window.addEventListener("load", () => {
   const loader = document.getElementById("loader");
