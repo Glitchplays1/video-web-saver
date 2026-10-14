@@ -657,6 +657,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => setMode(tab.dataset.mode));
 });
 
+if (els.file && els.drop && els.form) {
 els.file.addEventListener("change", () => {
   pendingFile = els.file.files[0] || null;
   els.fileName.textContent = pendingFile ? pendingFile.name : "No file chosen";
@@ -771,6 +772,7 @@ els.form.addEventListener("submit", async (e) => {
     if (els.saveStatus) els.saveStatus.textContent = "Could not add that video. " + (err && err.message ? err.message : "Try again.");
   }
 });
+}
 
 function filtered() {
   const q = els.search.value.trim().toLowerCase();
@@ -1200,7 +1202,8 @@ document.getElementById("seriesList").addEventListener("click", async (e) => {
     openSeries((item.show || "").toLowerCase());
   }
 });
-document.getElementById("shelfInput").addEventListener("change", (e) => {
+const shelfInput = document.getElementById("shelfInput");
+if (shelfInput) shelfInput.addEventListener("change", (e) => {
   document.getElementById("seriesFields").hidden = e.target.value !== "Series" && e.target.value !== "Anime";
 });
 
