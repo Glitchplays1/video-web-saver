@@ -1003,58 +1003,6 @@ function render(highlightId) {
   if (shelves && animeCards.length) shelves.appendChild(buildRow("Anime", animeCards, unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime"))));
   if (shelves && movieCards.length) shelves.appendChild(buildRow("Movies", movieCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie")))));
   if (shelves && showCards.length) shelves.appendChild(buildRow("Shows", showCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show))));
-
-  grouped.forEach((eps, key) => {
-    eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
-    const first = eps[0];
-    const seasons = new Set(eps.map((ep) => ep.season || 1)).size;
-    const seasonLabel = (first.show || "").toLowerCase() === "the seven deadly sins"
-      ? "5 seasons + Special/Mini-Season"
-      : seasons + " season" + (seasons === 1 ? "" : "s");
-    const card = document.createElement("article");
-    card.className = "rounded-xl border border-dashed border-blue-300 p-2";
-    const pic = first.thumbUrl || first.poster || posterDataUrl(first.show);
-    card.innerHTML =
-      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-show="' + escapeHtml(key) + '">' +
-        '<img class="h-full w-full object-cover" alt="' + escapeHtml(first.show) + '">' +
-        '<span class="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-xs">' + eps.length + ' eps</span>' +
-      '</div>' +
-      '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(first.show) + '</h3>' +
-      '<p class="mb-2 text-center text-xs text-slate-300">' + seasonLabel + '</p>' +
-      '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeHtml(key) + '">Open series</button></div>';
-    card.querySelector("img").src = pic || posterDataUrl(first.show);
-    els.cards.appendChild(card);
-  });
-
-  loose.forEach((item) => {
-    const card = document.createElement("article");
-    card.className = "rounded-xl border border-dashed border-blue-300 p-2" + (highlightId && item.id === highlightId ? " outline outline-2 outline-emerald-300" : "");
-    card.dataset.id = item.id;
-    const pic = item.thumbUrl || item.poster || posterDataUrl(item.title);
-    card.innerHTML =
-      '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-info="' + item.id + '">' +
-        '<img class="h-full w-full object-cover" alt="' + escapeHtml(item.title) + '">' +
-        '<span class="absolute bottom-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-black/70 text-xs">▶</span>' +
-      '</div>' +
-      '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(item.title) + '</h3>' +
-      '<div class="mb-1 flex flex-wrap justify-center gap-1">' +
-        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-play="' + item.id + '">Watch</button>' +
-        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-fav="' + item.id + '">' + (item.favorite ? "Saved" : "Favorite") + '</button>' +
-        '<button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-delete="' + item.id + '">Delete</button>' +
-      '</div>';
-    const img = card.querySelector("img");
-    img.src = pic || posterDataUrl(item.title);
-    img.dataset.tries = "0";
-    img.addEventListener("error", () => {
-      const tries = posterFallbacks(pic);
-      const next = Number(img.dataset.tries) + 1;
-      img.dataset.tries = String(next);
-      if (tries[next]) img.src = tries[next];
-      else img.src = posterDataUrl(item.title);
-    });
-    els.cards.appendChild(card);
-    if (!item.thumbUrl && item.type === "file") fillStoredThumb(item);
-  });
 }
 
 async function fillStoredThumb(item) {
