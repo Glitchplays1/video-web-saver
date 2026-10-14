@@ -78,19 +78,19 @@
     <a class="view-link hover:text-blue-200" href="#about" data-view="about">About</a>
   </div>
 
-  <header class="sticky top-0 z-40 flex min-h-[72px] items-center gap-4 bg-black/80 px-6 py-2 backdrop-blur">
-    <a id="logoHome" href="#library"><img class="h-auto w-32" src="yaflix-logo.svg" alt="Yaflix" /></a>
-    <button id="menuBtn" class="ml-auto rounded-lg border border-slate-500 px-3 py-1 md:hidden" type="button">Menu</button>
-    <nav id="siteNav" class="ml-4 hidden items-center gap-1 md:flex">
-      <button type="button" class="cat rounded px-3 py-2 text-white" data-filter="all">Home</button>
-      <button type="button" class="cat rounded px-3 py-2 text-slate-200" data-filter="anime">Anime</button>
-      <button type="button" class="cat rounded px-3 py-2 text-slate-200" data-filter="movies">Movies</button>
-      <button type="button" class="cat rounded px-3 py-2 text-slate-200" data-filter="series">Series</button>
-      <button type="button" class="view-link rounded px-3 py-2 text-slate-200" data-view="settings">Settings</button>
+  <header class="fixed left-0 top-0 z-40 flex h-screen w-44 flex-col items-stretch gap-3 bg-black/90 px-4 py-4">
+    <a id="logoHome" href="#library"><img class="h-auto w-28" src="yaflix-logo.svg" alt="Yaflix" /></a>
+    <button id="menuBtn" class="rounded-lg border border-slate-500 px-3 py-1 md:hidden" type="button">Menu</button>
+    <nav id="siteNav" class="flex flex-col gap-1">
+      <button type="button" class="cat rounded px-3 py-2 text-left text-white" data-filter="all">Home</button>
+      <button type="button" class="cat rounded px-3 py-2 text-left text-slate-200" data-filter="anime">Anime</button>
+      <button type="button" class="cat rounded px-3 py-2 text-left text-slate-200" data-filter="movies">Movies</button>
+      <button type="button" class="cat rounded px-3 py-2 text-left text-slate-200" data-filter="series">Series</button>
+      <button type="button" class="view-link rounded px-3 py-2 text-left text-slate-200" data-view="settings">Settings</button>
     </nav>
-    <form id="navSearch" class="ml-auto hidden items-center rounded-full bg-white/10 px-3 md:flex" role="search">
+    <form id="navSearch" class="flex items-center rounded-full bg-white/10 px-3" role="search">
       <span class="text-slate-300">⌕</span>
-      <input id="searchInput" class="w-36 bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search" />
+      <input id="searchInput" class="w-full bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search" />
     </form>
     <button id="switchProfile" class="h-9 w-9 overflow-hidden rounded bg-slate-700" type="button" aria-label="Switch profile">
       <img id="cornerPic" class="h-full w-full object-cover" alt="" />
@@ -107,7 +107,7 @@
 
   <div id="alertBar" class="hidden" hidden></div>
 
-  <main id="library" data-view-panel="library" class="mt-0 w-full">
+  <main id="library" data-view-panel="library" class="ml-44 mt-0 w-[calc(100%-11rem)]">
     <section id="homeHero" class="relative min-h-[420px] overflow-hidden bg-slate-900">
       <img id="heroImage" class="absolute inset-0 h-full w-full object-cover" alt="" />
       <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
