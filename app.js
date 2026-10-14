@@ -880,6 +880,7 @@ function render(highlightId) {
   });
   const featured = items[0];
   if (featured) fillHero(featured);
+  fillRecommendations(items);
 
   grouped.forEach((eps, key) => {
     eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
