@@ -185,7 +185,7 @@ function addAnimeSeasons() {
   const show = "The Seven Deadly Sins";
   const poster = "posters/anime/anime-4.png";
   for (let season = 1; season <= 5; season += 1) {
-    for (let episode = 1; episode <= 10; episode += 1) {
+    for (let episode = 1; episode <= 24; episode += 1) {
       const id = "anime-04-s" + season + "e" + episode;
       let item = library.find((entry) => entry.id === id);
       if (!item) {
