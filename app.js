@@ -1317,3 +1317,75 @@ document.getElementById("autoplayToggle").addEventListener("change", (e) => {
 });
 
 render();
+
+function isTvBrowser() {
+  return /smart-?tv|smarttv|webos|tizen|netcast|bravia|hbbtv|viera|aftb|aftm|crkey/i.test(navigator.userAgent);
+}
+function setTv(on) {
+  document.body.classList.toggle("tv", on);
+  const box = document.getElementById("tvSwitch");
+  if (box) box.checked = on;
+  localStorage.setItem("yaflix-tv", on ? "on" : "off");
+}
+const savedTv = localStorage.getItem("yaflix-tv");
+setTv(savedTv ? savedTv === "on" : isTvBrowser());
+const tvSwitch = document.getElementById("tvSwitch");
+if (tvSwitch) tvSwitch.addEventListener("change", (e) => setTv(e.target.checked));
+
+function tvTargets() {
+  return Array.from(document.querySelectorAll("button, a, select, input")).filter((el) => {
+    if (el.disabled || el.hidden) return false;
+    const style = getComputedStyle(el);
+    return style.display !== "none" && style.visibility !== "hidden";
+  });
+}
+function moveTvFocus(key) {
+  const items = tvTargets();
+  const current = document.activeElement;
+  if (!items.length) return;
+  if (!items.includes(current)) {
+    items[0].focus();
+    return;
+  }
+  const box = current.getBoundingClientRect();
+  const cx = box.left + box.width / 2;
+  const cy = box.top + box.height / 2;
+  let best = null;
+  let bestScore = Infinity;
+  items.forEach((el) => {
+    if (el === current) return;
+    const rect = el.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const dx = x - cx;
+    const dy = y - cy;
+    const ok = (key === "ArrowRight" && dx > 20) || (key === "ArrowLeft" && dx < -20) || (key === "ArrowDown" && dy > 20) || (key === "ArrowUp" && dy < -20);
+    if (!ok) return;
+    const score = Math.abs(dx) + Math.abs(dy) * (key === "ArrowLeft" || key === "ArrowRight" ? 1.4 : 1);
+    if (score < bestScore) {
+      best = el;
+      bestScore = score;
+    }
+  });
+  if (best) best.focus();
+}
+document.addEventListener("keydown", (e) => {
+  if (!document.body.classList.contains("tv")) return;
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault();
+    moveTvFocus(e.key);
+  }
+  if (e.key === "Escape" || e.key === "BrowserBack") {
+    const dialog = document.getElementById("playerDialog");
+    if (dialog && dialog.open) {
+      e.preventDefault();
+      dialog.close();
+      return;
+    }
+    const panel = document.getElementById("seriesPanel");
+    if (panel && !panel.classList.contains("hidden")) {
+      e.preventDefault();
+      panel.classList.add("hidden");
+    }
+  }
+});
