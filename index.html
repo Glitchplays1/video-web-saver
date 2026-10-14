@@ -244,6 +244,7 @@
       });
     });
     window.showView = function (name) {
+      if (name === "add" || name === "storage") name = "library";
       document.querySelectorAll("[data-view-panel]").forEach(function (panel) {
         panel.classList.toggle("hidden", panel.dataset.viewPanel !== name);
       });
