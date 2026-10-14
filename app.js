@@ -892,12 +892,58 @@ function cardFor(item, key) {
 }
 function fillRecommendations(items) {
   const row = document.getElementById("recommendRow");
-  if (!row) return;
-  row.innerHTML = "";
-  topRecommendations(items).forEach((item) => {
-    row.appendChild(cardFor(item, item.show ? item.show.toLowerCase() : ""));
-  });
+  if (row) row.innerHTML = "";
 }
+function buildRow(title, cards, moreItems) {
+  const wrap = document.createElement("section");
+  wrap.className = "mb-8";
+  const head = document.createElement("div");
+  head.className = "mb-3 flex items-center justify-between";
+  head.innerHTML = '<h3 class="text-xl font-semibold">' + escapeHtml(title) + '</h3>';
+  if (moreItems.length > 5) {
+    const more = document.createElement("button");
+    more.type = "button";
+    more.className = "rounded-full border border-white/40 px-4 py-1 text-sm";
+    more.textContent = "See more";
+    more.addEventListener("click", () => openMore(title, moreItems));
+    head.appendChild(more);
+  }
+  const scroller = document.createElement("div");
+  scroller.className = "relative";
+  const left = document.createElement("button");
+  const right = document.createElement("button");
+  left.type = "button";
+  right.type = "button";
+  left.className = "absolute left-0 top-1/3 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/70 text-2xl";
+  right.className = "absolute right-0 top-1/3 z-10 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-black/70 text-2xl";
+  left.textContent = "‹";
+  right.textContent = "›";
+  const row = document.createElement("div");
+  row.className = "flex gap-3 overflow-x-auto px-12 pb-4";
+  cards.forEach((card) => row.appendChild(card));
+  left.addEventListener("click", () => { row.scrollBy({ left: -500, behavior: "smooth" }); });
+  right.addEventListener("click", () => { row.scrollBy({ left: 500, behavior: "smooth" }); });
+  scroller.appendChild(left);
+  scroller.appendChild(row);
+  scroller.appendChild(right);
+  wrap.appendChild(head);
+  wrap.appendChild(scroller);
+  return wrap;
+}
+function openMore(title, items) {
+  const panel = document.getElementById("morePanel");
+  const list = document.getElementById("moreList");
+  document.getElementById("moreTitle").textContent = title;
+  list.innerHTML = "";
+  items.forEach((item) => list.appendChild(cardFor(item, item.show ? item.show.toLowerCase() : "")));
+  panel.classList.remove("hidden");
+  document.getElementById("shelves").classList.add("hidden");
+  panel.scrollIntoView({ behavior: "smooth" });
+}
+document.getElementById("closeMore").addEventListener("click", () => {
+  document.getElementById("morePanel").classList.add("hidden");
+  document.getElementById("shelves").classList.remove("hidden");
+});
 function render(highlightId) {
   const items = filtered();
   els.cards.innerHTML = "";
@@ -921,7 +967,26 @@ function render(highlightId) {
   });
   const featured = items[0];
   if (featured) fillHero(featured);
-  fillRecommendations(items);
+  const shelves = document.getElementById("shelves");
+  if (shelves) shelves.innerHTML = "";
+  const recommended = topRecommendations(items).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  if (shelves && recommended.length) shelves.appendChild(buildRow("Recommended for You", recommended, topRecommendations(items)));
+  const anime = loose.filter((item) => (item.shelf || "").toLowerCase() === "anime").concat(Array.from(grouped.values()).flat().filter((item) => (item.shelf || "").toLowerCase() === "anime" && !item.episode));
+  const unique = (list) => {
+    const seen = new Set();
+    return list.filter((item) => {
+      const key = item.show || item.id;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+  const animeCards = unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime")).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  const movieCards = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie"))).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  const showCards = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show)).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  if (shelves && animeCards.length) shelves.appendChild(buildRow("Anime", animeCards, unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime"))));
+  if (shelves && movieCards.length) shelves.appendChild(buildRow("Movies", movieCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie")))));
+  if (shelves && showCards.length) shelves.appendChild(buildRow("Shows", showCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show))));
 
   grouped.forEach((eps, key) => {
     eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
@@ -1120,7 +1185,7 @@ function closeMedia() {
   els.embed.src = "";
 }
 
-els.cards.addEventListener("click", async (e) => {
+async function openCard(e) {
   if (e.target.closest("a")) return;
   const showEl = e.target.closest("[data-show]");
   const infoEl = e.target.closest("[data-info]");
@@ -1163,7 +1228,10 @@ els.cards.addEventListener("click", async (e) => {
     if (item.type === "file") await deleteStored(id).catch(() => {});
     render();
   }
-});
+}
+els.cards.addEventListener("click", openCard);
+document.getElementById("shelves").addEventListener("click", openCard);
+document.getElementById("moreList").addEventListener("click", openCard);
 
 function closePlayer() {
   closeMedia();
