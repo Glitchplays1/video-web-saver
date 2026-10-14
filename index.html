@@ -84,10 +84,14 @@
       <button type="button" class="cat rounded px-3 py-2 text-left text-slate-200" data-filter="series">Series</button>
       <button type="button" class="view-link rounded px-3 py-2 text-left text-slate-200" data-view="settings">Settings</button>
     </nav>
-    <form id="navSearch" class="flex items-center rounded-full bg-white/10 px-3" role="search">
-      <span class="text-slate-300">⌕</span>
-      <input id="searchInput" class="w-full bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search" />
-    </form>
+    <button id="searchOpen" class="rounded-full bg-white/10 px-3 py-2 text-left" type="button">⌕ Search</button>
+    <div id="searchPanel" class="fixed left-44 top-24 z-50 hidden w-72 rounded-2xl bg-black/95 p-3 shadow-xl">
+      <form id="navSearch" class="flex items-center rounded-full bg-white/10 px-3" role="search">
+        <span class="text-slate-300">⌕</span>
+        <input id="searchInput" class="w-full bg-transparent px-2 py-2 outline-none" type="search" placeholder="Search" />
+      </form>
+      <div id="searchResults" class="mt-3 max-h-96 space-y-2 overflow-y-auto"></div>
+    </div>
     <button id="switchProfile" class="h-9 w-9 overflow-hidden rounded bg-slate-700" type="button" aria-label="Switch profile">
       <img id="cornerPic" class="h-full w-full object-cover" alt="" />
     </button>
@@ -250,7 +254,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=43"></script>
+  <script src="app.js?v=44"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
