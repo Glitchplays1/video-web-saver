@@ -279,7 +279,17 @@ footer {
   padding: 16px 10px 8px;
   margin-top: 24px;
 }
-footer p { margin: 0; font-size: 14px; }
+body.tv #siteNav { display: flex !important; }
+body.tv button, body.tv a, body.tv select, body.tv article {
+  scroll-margin: 80px;
+}
+body.tv button:focus, body.tv a:focus, body.tv select:focus, body.tv article:focus {
+  outline: 4px solid #fff;
+  outline-offset: 3px;
+}
+body.tv #cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; }
+body.tv #cards h3, body.tv #seriesList button { font-size: 18px; }
+body.tv #detailPlay, body.tv #detailResume, body.tv #closeSeries { font-size: 22px; padding: 12px 22px; }
 footer .sub { background: var(--bar); margin-top: 10px; padding: 8px; }
 
 @media (max-width: 1100px) {
