@@ -817,6 +817,9 @@ function render(highlightId) {
     eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
     const first = eps[0];
     const seasons = new Set(eps.map((ep) => ep.season || 1)).size;
+    const seasonLabel = (first.show || "").toLowerCase() === "the seven deadly sins"
+      ? "5 seasons + Special/Mini-Season"
+      : seasons + " season" + (seasons === 1 ? "" : "s");
     const card = document.createElement("article");
     card.className = "rounded-xl border border-dashed border-blue-300 p-2";
     const pic = first.thumbUrl || first.poster || posterDataUrl(first.show);
@@ -826,7 +829,7 @@ function render(highlightId) {
         '<span class="absolute bottom-2 right-2 rounded-full bg-black/70 px-2 py-1 text-xs">' + eps.length + ' eps</span>' +
       '</div>' +
       '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(first.show) + '</h3>' +
-      '<p class="mb-2 text-center text-xs text-slate-300">' + seasons + ' season' + (seasons === 1 ? '' : 's') + '</p>' +
+      '<p class="mb-2 text-center text-xs text-slate-300">' + seasonLabel + '</p>' +
       '<div class="mb-1 flex justify-center"><button class="rounded-full bg-bar px-2 py-1 text-xs" type="button" data-show="' + escapeHtml(key) + '">Open series</button></div>';
     card.querySelector("img").src = pic || posterDataUrl(first.show);
     els.cards.appendChild(card);
