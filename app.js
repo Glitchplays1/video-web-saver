@@ -141,7 +141,23 @@ function applyFile(rows, shelf) {
     item.show = "";
     item.thumbUrl = row.pic || item.thumbUrl || "";
     const number = String(id).match(/(\d+)$/);
-    if (shelf === "Anime" && number) item.url = "videos/anime/anime-" + number[1] + ".mp4";
+    if (shelf === "Anime" && number) {
+      const n = Number(number[1]);
+      const folders = [
+        "01-jujutsu-kaisen",
+        "02-one-piece",
+        "03-spy-family",
+        "04-the-seven-deadly-sins",
+        "05-dragon-ball-super",
+        "06-demon-slayer",
+        "07-detective-conan-case-closed",
+        "08-solo-leveling",
+        "09-attack-on-titan",
+        "10-frieren-beyond-journeys-end"
+      ];
+      const folder = folders[n - 1] || ("anime-" + n);
+      item.url = "videos/anime/" + folder + "/video.mp4";
+    }
   });
   const prefix = "sample-" + shelf.toLowerCase() + "-";
   library = library.filter((item) => ids.has(item.id) || (item.shelf !== shelf && !String(item.id).startsWith(prefix)));
