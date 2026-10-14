@@ -793,6 +793,70 @@ function filtered() {
   return items;
 }
 
+function watchCounts() {
+  try { return JSON.parse(localStorage.getItem("yaflix-watches") || "{}"); } catch { return {}; }
+}
+function noteWatch(item) {
+  if (!item) return;
+  const all = watchCounts();
+  const key = item.show || item.id;
+  all[key] = (all[key] || 0) + 1;
+  localStorage.setItem("yaflix-watches", JSON.stringify(all));
+}
+function recommendScore(item) {
+  const watches = watchCounts();
+  const key = item.show || item.id;
+  let score = 0;
+  score += (watches[key] || 0) * 5;
+  if (item.favorite) score += 8;
+  if (getProgress(item.id) > 2) score += 4;
+  const shelf = (item.shelf || "").toLowerCase();
+  const shelfWatches = Object.keys(watches).filter((name) => {
+    const match = library.find((entry) => (entry.show || entry.id) === name);
+    return match && (match.shelf || "").toLowerCase() === shelf;
+  }).length;
+  score += shelfWatches * 2;
+  const titleWords = (item.title + " " + (item.show || "")).toLowerCase().split(/\s+/);
+  titleWords.forEach((word) => {
+    if (word.length > 3 && JSON.stringify(watches).toLowerCase().includes(word)) score += 1;
+  });
+  return score;
+}
+function topRecommendations(items) {
+  const seen = new Set();
+  return items
+    .slice()
+    .sort((a, b) => recommendScore(b) - recommendScore(a))
+    .filter((item) => {
+      const key = item.show || item.id;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 10);
+}
+function cardFor(item, key) {
+  const card = document.createElement("article");
+  card.className = "rounded-xl border border-white/10 bg-black/30 p-2";
+  const pic = item.thumbUrl || item.poster || posterDataUrl(item.show || item.title);
+  const label = item.show || item.title;
+  card.innerHTML =
+    '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-info="' + item.id + '">' +
+      '<img class="h-full w-full object-cover" alt="' + escapeHtml(label) + '">' +
+    '</div>' +
+    '<h3 class="px-1 py-2 text-center text-sm font-medium leading-snug">' + escapeHtml(label) + '</h3>';
+  card.querySelector("img").src = pic;
+  if (key) card.querySelector("div").setAttribute("data-show", key);
+  return card;
+}
+function fillRecommendations(items) {
+  const row = document.getElementById("recommendRow");
+  if (!row) return;
+  row.innerHTML = "";
+  topRecommendations(items).forEach((item) => {
+    row.appendChild(cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  });
+}
 function render(highlightId) {
   const items = filtered();
   els.cards.innerHTML = "";
@@ -941,6 +1005,7 @@ function nextEpisode(item) {
 
 async function openSaved(item, resume) {
   if (!item) return;
+  noteWatch(item);
   closeMedia();
   els.player.dataset.itemId = item.id;
   els.playerTitle.textContent = item.title;

@@ -140,7 +140,9 @@
       <div id="seriesList" class="bg-[#181818] px-5 pb-6"></div>
     </section>
     <div class="mx-auto mt-6 w-[min(1400px,calc(100%-2rem))]">
-      <h3 class="mb-3 text-xl font-semibold">Your Next Watch</h3>
+      <h3 class="mb-3 text-xl font-semibold">Recommended for You</h3>
+      <div id="recommendRow" class="flex gap-3 overflow-x-auto pb-4"></div>
+      <h3 class="mb-3 mt-4 text-xl font-semibold">Your Next Watch</h3>
       <div id="cards" class="flex gap-3 overflow-x-auto pb-4"></div>
       <p id="emptyState" class="py-8 text-center text-slate-400">Nothing saved yet.</p>
     </div>
@@ -242,7 +244,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=37"></script>
+  <script src="app.js?v=38"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
