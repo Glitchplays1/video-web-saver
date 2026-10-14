@@ -800,7 +800,7 @@ function render(highlightId) {
   const fileCount = library.filter((i) => i.type === "file").length;
   const totalBytes = library.reduce((sum, i) => sum + (i.size || 0), 0);
   const summary = library.length + " saved · " + fileCount + " files · " + prettySize(totalBytes);
-  els.storage.textContent = summary;
+  if (els.storage) els.storage.textContent = summary;
   if (els.storageDetail) els.storageDetail.textContent = summary + " in this browser. Clearing site data removes files.";
 
   const grouped = new Map();
@@ -814,6 +814,8 @@ function render(highlightId) {
       loose.push(item);
     }
   });
+  const featured = items[0];
+  if (featured) fillHero(featured);
 
   grouped.forEach((eps, key) => {
     eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
@@ -878,6 +880,32 @@ async function fillStoredThumb(item) {
   } catch { /* poster already showing */ }
 }
 
+function fillHero(item) {
+  const image = document.getElementById("heroImage");
+  const title = document.getElementById("heroTitle");
+  const meta = document.getElementById("heroMeta");
+  const about = document.getElementById("heroAbout");
+  const kind = document.getElementById("heroKind");
+  if (!image || !title) return;
+  image.src = item.thumbUrl || item.poster || posterDataUrl(item.show || item.title);
+  title.textContent = item.show || item.title;
+  if (kind) kind.textContent = item.shelf || "Yaflix";
+  if (meta) meta.textContent = item.show ? "Show" : item.shelf || "";
+  if (about) about.textContent = item.notes || "Open this title to see episodes and play.";
+  window.heroItem = item;
+}
+document.getElementById("heroPlay").addEventListener("click", () => {
+  const item = window.heroItem;
+  if (!item) return;
+  if (item.show) openSeries((item.show || "").toLowerCase());
+  else openSaved(item, false);
+});
+document.getElementById("heroInfo").addEventListener("click", () => {
+  const item = window.heroItem;
+  if (!item) return;
+  if (item.show) openSeries((item.show || "").toLowerCase());
+  else openDetail(item);
+});
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "\u0026amp;")
