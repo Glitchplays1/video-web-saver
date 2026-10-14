@@ -290,6 +290,36 @@ function openProfileForm(profile) {
   document.getElementById("kidsNote").textContent = rating <= 3 ? "Kids profile" : "Not a kids profile";
   document.getElementById("profileRemove").classList.toggle("hidden", !profile);
 }
+function catalogPosters() {
+  const seen = new Set();
+  return library.filter((item) => {
+    const key = item.show || item.id;
+    const pic = item.thumbUrl || item.poster;
+    if (!pic || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+let backdropTimer = null;
+let backdropIndex = 0;
+function startBackdropCycle() {
+  if (backdropTimer) clearInterval(backdropTimer);
+  const items = catalogPosters();
+  if (!items.length) return;
+  const show = () => {
+    const item = items[backdropIndex % items.length];
+    backdropIndex += 1;
+    const pic = item.thumbUrl || item.poster;
+    const backdrop = document.getElementById("whoBackdrop");
+    if (backdrop) backdrop.src = pic;
+    const hero = document.getElementById("heroImage");
+    if (hero) hero.src = pic;
+    const title = document.getElementById("heroTitle");
+    if (title && !window.heroLocked) title.textContent = item.show || item.title;
+  };
+  show();
+  backdropTimer = setInterval(show, 5000);
+}
 function drawProfiles() {
   const row = document.getElementById("profileRow");
   const backdrop = document.getElementById("whoBackdrop");
@@ -342,6 +372,7 @@ function drawProfiles() {
   add.addEventListener("click", () => openProfileForm(null));
   row.appendChild(add);
   document.getElementById("editProfiles").textContent = editingProfiles ? "DONE" : "EDIT PROFILES";
+  startBackdropCycle();
 }
 document.getElementById("ratingSlider").addEventListener("input", (e) => {
   document.getElementById("profileRating").value = e.target.value;
