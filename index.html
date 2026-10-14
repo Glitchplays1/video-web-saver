@@ -327,9 +327,7 @@
       document.querySelectorAll("[data-view-panel]").forEach(function (panel) {
         panel.classList.toggle("hidden", panel.dataset.viewPanel !== name);
       });
-      if (name === "add") document.getElementById("titleInput").focus();
     };
-    if (location.hash === "#add") showView("add");
     if (location.hash === "#settings") showView("settings");
     var bgTimer = null;
     var hue = 220;
