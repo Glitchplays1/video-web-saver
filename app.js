@@ -257,17 +257,33 @@ function currentRating() {
   const profile = profiles.find((p) => p.id === id);
   return profile ? Number(profile.rating) || 4 : 5;
 }
+function setSideBar(show) {
+  const bar = document.getElementById("sideBar");
+  const main = document.getElementById("library");
+  if (bar) {
+    bar.classList.toggle("hidden", !show);
+    bar.classList.toggle("flex", show);
+  }
+  if (main) {
+    main.classList.toggle("ml-44", show);
+    main.classList.toggle("w-[calc(100%-11rem)]", show);
+    main.classList.toggle("ml-0", !show);
+    main.classList.toggle("w-full", !show);
+  }
+}
 function openWho() {
   const screen = document.getElementById("whoScreen");
   if (!screen) return;
   screen.classList.remove("hidden");
   screen.classList.add("flex");
+  setSideBar(false);
   drawProfiles();
 }
 function closeWho() {
   const screen = document.getElementById("whoScreen");
   screen.classList.add("hidden");
   screen.classList.remove("flex");
+  setSideBar(true);
 }
 let editingId = null;
 function openProfileForm(profile) {

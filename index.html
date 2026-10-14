@@ -37,8 +37,8 @@
     <p class="mt-3 text-xs tracking-[0.42em]">LOADING</p>
   </div>
 
-  <div id="whoScreen" class="fixed inset-0 z-40 hidden bg-black text-left">
-    <img id="whoBackdrop" class="absolute inset-0 h-full w-full object-cover opacity-50" alt="" />
+  <div id="whoScreen" class="fixed inset-0 z-50 hidden bg-black text-left">
+    <img id="whoBackdrop" class="absolute inset-0 h-full w-full object-cover object-top opacity-60" alt="" />
     <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/30"></div>
     <div class="relative z-10 flex h-full items-center px-10">
       <div>
@@ -73,12 +73,8 @@
       </div>
     </form>
   </div>
-    <a class="view-link hover:text-blue-200" href="#library" data-view="library">Library</a>
-    <a class="view-link hover:text-blue-200" href="#settings" data-view="settings">Settings</a>
-    <a class="view-link hover:text-blue-200" href="#about" data-view="about">About</a>
-  </div>
 
-  <header class="fixed left-0 top-0 z-40 flex h-screen w-44 flex-col items-stretch gap-3 bg-black/90 px-4 py-4">
+  <header id="sideBar" class="fixed left-0 top-0 z-40 hidden h-screen w-44 flex-col items-stretch gap-3 bg-black/90 px-4 py-4">
     <a id="logoHome" href="#library"><img class="h-auto w-28" src="yaflix-logo.svg" alt="Yaflix" /></a>
     <button id="menuBtn" class="rounded-lg border border-slate-500 px-3 py-1 md:hidden" type="button">Menu</button>
     <nav id="siteNav" class="flex flex-col gap-1">
@@ -254,7 +250,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=42"></script>
+  <script src="app.js?v=43"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
