@@ -292,14 +292,17 @@ function openProfileForm(profile) {
 }
 function drawProfiles() {
   const row = document.getElementById("profileRow");
+  const backdrop = document.getElementById("whoBackdrop");
   row.innerHTML = "";
+  if (backdrop && library[0]) backdrop.src = library[0].thumbUrl || library[0].poster || "";
+  const selectedId = localStorage.getItem("yaflix-watching");
   profiles.forEach((p) => {
+    const selected = p.id === selectedId || (!selectedId && p === profiles[0]);
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "w-28 text-slate-300 hover:text-white";
-    const kind = Number(p.rating) <= 3 ? "Kids profile" : ratingName(p.rating);
-    btn.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center overflow-hidden rounded-md bg-slate-700 text-3xl"></span><span class="mt-2 block">' + escapeHtml(p.name) + '</span><span class="block text-xs text-slate-400">' + escapeHtml(kind) + '</span>';
-    const face = btn.querySelector("span");
+    btn.className = "flex items-center gap-4 text-left text-white";
+    const face = document.createElement("span");
+    face.className = "grid h-16 w-16 place-items-center overflow-hidden rounded-md bg-slate-700 text-2xl" + (selected ? " ring-4 ring-white" : "");
     if (p.pic) {
       const img = document.createElement("img");
       img.className = "h-full w-full object-cover";
@@ -309,6 +312,13 @@ function drawProfiles() {
     } else {
       face.textContent = (p.name || "?").slice(0, 1).toUpperCase();
       face.style.background = p.color || "#334155";
+    }
+    btn.appendChild(face);
+    if (selected) {
+      const name = document.createElement("span");
+      name.className = "text-2xl";
+      name.textContent = p.name;
+      btn.appendChild(name);
     }
     btn.addEventListener("click", () => {
       if (editingProfiles) {
@@ -327,8 +337,8 @@ function drawProfiles() {
   });
   const add = document.createElement("button");
   add.type = "button";
-  add.className = "w-28 text-slate-300";
-  add.innerHTML = '<span class="mx-auto grid h-24 w-24 place-items-center rounded-md bg-slate-800 text-5xl">+</span><span class="mt-2 block">Add Profile</span>';
+  add.className = "grid h-16 w-16 place-items-center rounded-md border-2 border-white text-4xl";
+  add.textContent = "+";
   add.addEventListener("click", () => openProfileForm(null));
   row.appendChild(add);
   document.getElementById("editProfiles").textContent = editingProfiles ? "DONE" : "EDIT PROFILES";
