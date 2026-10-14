@@ -1153,7 +1153,7 @@ function openSeries(key) {
   seasons.forEach((unused, season) => {
     const option = document.createElement("option");
     option.value = season;
-    option.textContent = "Season " + season;
+    option.textContent = Number(season) === 6 ? "Special/Mini-Season" : "Season " + season;
     pick.appendChild(option);
   });
   pick.addEventListener("change", () => showSeason(pick.value));
