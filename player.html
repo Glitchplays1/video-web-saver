@@ -78,8 +78,24 @@
     const params = new URLSearchParams(location.search);
     const show = (params.get("show") || "").toLowerCase();
     const startId = params.get("id") || "";
-    const library = JSON.parse(localStorage.getItem("yaflix-library") || "[]");
-    const episodes = library.filter((item) => (item.show || "").toLowerCase() === show || item.id === startId);
+    let library = [];
+    try { library = JSON.parse(localStorage.getItem("yaflix-library") || "[]"); } catch { library = []; }
+    let episodes = library.filter((item) => (item.show || "").toLowerCase() === show || item.id === startId);
+    if (!episodes.length && show.includes("seven")) {
+      episodes = [];
+      for (let season = 1; season <= 5; season += 1) {
+        for (let episode = 1; episode <= 24; episode += 1) {
+          episodes.push({
+            id: "anime-04-s" + season + "e" + episode,
+            title: "Episode " + episode,
+            show: "The Seven Deadly Sins",
+            season,
+            episode,
+            url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : ""
+          });
+        }
+      }
+    }
     episodes.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
     const list = document.getElementById("episodes");
     function vimeoId(url) {

@@ -922,6 +922,8 @@ function cardFor(item, key) {
   card.className = "rounded-xl border border-white/10 bg-black/30 p-2";
   const pic = item.thumbUrl || item.poster || posterDataUrl(item.show || item.title);
   const label = item.show || item.title;
+  card.dataset.id = item.id;
+  if (key) card.dataset.show = key;
   card.innerHTML =
     '<div class="relative aspect-[2/3] overflow-hidden rounded-lg bg-slate-900" data-info="' + item.id + '">' +
       '<img class="h-full w-full object-cover" alt="' + escapeHtml(label) + '">' +
