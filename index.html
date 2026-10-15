@@ -121,9 +121,24 @@
             <button id="audioDub" class="rounded-full bg-white/20 px-4 py-1" type="button">Dub</button>
           </div>
         </div>
-        <aside class="max-h-[70vh] overflow-auto rounded-2xl bg-black/40 p-3">
-          <h2 class="mb-2 text-lg font-semibold">Episodes</h2>
-          <div id="siteEpisodes"></div>
+        <aside class="rounded-2xl bg-[#11131a] p-3">
+          <div class="mb-3 flex items-center gap-3">
+            <img id="showPoster" class="h-16 w-12 rounded object-cover" alt="" />
+            <div>
+              <h2 id="showName" class="text-lg font-semibold">Yaflix</h2>
+              <p class="text-xs text-slate-400">TV Series</p>
+            </div>
+          </div>
+          <button id="seasonToggle" class="mb-2 flex w-full items-center justify-between rounded-full bg-white/10 px-4 py-2 text-left" type="button">
+            <span id="seasonLabel">Season 1</span>
+            <span>▾</span>
+          </button>
+          <div id="seasonMenu" class="mb-3 hidden max-h-40 overflow-auto rounded-xl bg-black/40"></div>
+          <div class="mb-2 flex items-center justify-between text-sm">
+            <span>Episodes</span>
+            <span id="episodeCount">24</span>
+          </div>
+          <div id="siteEpisodes" class="grid grid-cols-6 gap-2"></div>
         </aside>
       </div>
     </section>
