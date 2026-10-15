@@ -1189,16 +1189,13 @@ async function openCard(e) {
   if (infoEl && !play && !del && !fav) {
     const item = library.find((i) => i.id === infoEl.getAttribute("data-info"));
     if (!item) return;
-    if (isPhone()) await openSaved(item, getProgress(item.id) > 2);
-    else openTitle(item);
+    location.href = "player.html?id=" + encodeURIComponent(item.id) + "&show=" + encodeURIComponent(item.show || "");
     return;
   }
   if (showEl && !play && !del && !fav) {
     if (isPhone()) {
-      const eps = library.filter((item) => (item.show || "").toLowerCase() === showEl.getAttribute("data-show"));
-      eps.sort((a, b) => (a.season - b.season) || (a.episode - b.episode));
-      if (eps[0]) await openSaved(eps[0], getProgress(eps[0].id) > 2);
-    } else openSeries(showEl.getAttribute("data-show"));
+      location.href = "player.html?show=" + encodeURIComponent(showEl.getAttribute("data-show"));
+    } else location.href = "player.html?show=" + encodeURIComponent(showEl.getAttribute("data-show"));
     return;
   }
   if (fav) {
