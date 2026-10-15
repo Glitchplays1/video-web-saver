@@ -763,27 +763,31 @@ els.form.addEventListener("submit", async (e) => {
 
   try {
     const shelfEl = document.getElementById("shelfInput");
-    const showName = (document.getElementById("showInput").value || "").trim();
-    const season = Number(document.getElementById("seasonInput").value) || 1;
-    const episode = Number(document.getElementById("episodeInput").value) || 1;
+    const showEl = document.getElementById("showInput");
+    const showName = showEl ? showEl.value.trim() : "";
+    const season = Number(document.getElementById("seasonInput") && document.getElementById("seasonInput").value) || 1;
+    const episode = Number(document.getElementById("episodeInput") && document.getElementById("episodeInput").value) || 1;
+    const actorsEl = document.getElementById("actorsInput");
+    const minutesEl = document.getElementById("minutesInput");
+    const ratingEl = document.getElementById("ratingInput");
     const item = {
       id: uid(),
       title,
-      tag: els.tag.value.trim(),
+      tag: els.tag ? els.tag.value.trim() : "",
       shelf: shelfEl ? shelfEl.value : "Other",
       show: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? showName : "",
       season: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? season : 0,
       episode: shelfEl && (shelfEl.value === "Series" || shelfEl.value === "Anime") ? episode : 0,
-      actors: document.getElementById("actorsInput").value.trim(),
-      minutes: Number(document.getElementById("minutesInput").value) || 0,
-      notes: els.notes.value.trim(),
+      actors: actorsEl ? actorsEl.value.trim() : "",
+      minutes: minutesEl ? Number(minutesEl.value) || 0 : 0,
+      notes: els.notes ? els.notes.value.trim() : "",
       type: useFile ? "file" : "link",
       url: useFile ? "" : typedUrl,
       thumbUrl: useFile ? "" : thumbnailFromLink(typedUrl, extraThumb),
       poster: posterDataUrl(showName || title),
       fileName: pickedFile ? pickedFile.name : "",
       size: pickedFile ? pickedFile.size : 0,
-      rating: Number(document.getElementById("ratingInput").value) || 3,
+      rating: ratingEl ? Number(ratingEl.value) || 3 : 3,
       favorite: false,
       createdAt: new Date().toISOString(),
     };
@@ -804,9 +808,17 @@ els.form.addEventListener("submit", async (e) => {
 
     els.form.reset();
     pendingFile = null;
-    els.fileName.textContent = "No file chosen";
+    if (els.fileName) els.fileName.textContent = "No file chosen";
     setMode("link");
-    document.getElementById("seriesFields").hidden = true;
+    const seriesFields = document.getElementById("seriesFields");
+    if (seriesFields) seriesFields.hidden = true;
+    document.getElementById("addPanel").classList.add("hidden");
+    if (pickedFile) {
+      try {
+        await putFile(item.id, pickedFile);
+      } catch { /* file stays for this play only */ }
+    }
+    openSaved(item, false);
 
     if (pickedFile) {
       try {
@@ -1237,6 +1249,13 @@ document.getElementById("searchOpen").addEventListener("click", () => {
   const panel = document.getElementById("searchPanel");
   panel.classList.toggle("hidden");
   if (!panel.classList.contains("hidden")) els.search.focus();
+});
+document.getElementById("addOpen").addEventListener("click", () => {
+  document.getElementById("addPanel").classList.toggle("hidden");
+});
+document.getElementById("fileInput").addEventListener("change", () => {
+  const file = document.getElementById("fileInput").files[0];
+  document.getElementById("fileName").textContent = file ? file.name : "No file chosen";
 });
 els.filter.addEventListener("change", () => render());
 els.sort.addEventListener("change", () => render());
