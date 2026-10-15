@@ -108,6 +108,23 @@
   <div id="alertBar" class="hidden" hidden></div>
 
   <main id="library" data-view-panel="library" class="ml-44 mt-0 w-[calc(100%-11rem)]">
+    <section id="sitePlayer" class="hidden p-4">
+      <button id="closeSitePlayer" class="mb-3 rounded-full border border-white/40 px-4 py-1" type="button">Back</button>
+      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div>
+          <div class="relative aspect-video overflow-hidden rounded-2xl bg-black">
+            <video id="siteVideo" class="absolute inset-0 h-full w-full" controls playsinline hidden></video>
+            <iframe id="siteEmbed" class="absolute inset-0 h-full w-full" title="Yaflix player" allow="autoplay; fullscreen" allowfullscreen hidden></iframe>
+          </div>
+          <p id="siteStatus" class="mt-2 text-sm text-slate-300">Ready.</p>
+        </div>
+        <aside class="max-h-[70vh] overflow-auto rounded-2xl bg-black/40 p-3">
+          <h2 class="mb-2 text-lg font-semibold">Episodes</h2>
+          <div id="siteEpisodes"></div>
+        </aside>
+      </div>
+    </section>
+    <div id="siteHome">
     <section id="homeHero" class="relative min-h-[420px] overflow-hidden bg-slate-900">
       <img id="heroImage" class="absolute inset-0 h-full w-full object-cover" alt="" />
       <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
@@ -156,6 +173,7 @@
       </div>
       <div id="moreList" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5"></div>
     </section>
+    </div>
   </main>
 
   <section id="add" data-view-panel="add" class="hidden" hidden aria-hidden="true"></section>
@@ -254,7 +272,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=51"></script>
+  <script src="app.js?v=52"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

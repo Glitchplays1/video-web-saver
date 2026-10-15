@@ -1056,10 +1056,68 @@ function fillHero(item) {
   if (about) about.textContent = item.notes || "Open this title to see episodes and play.";
   window.heroItem = item;
 }
+function openSitePlayer(id, show) {
+  const home = document.getElementById("siteHome");
+  const panel = document.getElementById("sitePlayer");
+  if (!panel) return;
+  home.classList.add("hidden");
+  panel.classList.remove("hidden");
+  let episodes = library.filter((item) => (item.show || "").toLowerCase() === show || item.id === id);
+  if (!episodes.length && (show.includes("seven") || String(id).indexOf("anime-04") === 0)) {
+    episodes = [];
+    for (let season = 1; season <= 5; season += 1) {
+      for (let episode = 1; episode <= 24; episode += 1) {
+        episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : "" });
+      }
+    }
+  }
+  episodes.sort((a, b) => (Number(a.season) - Number(b.season)) || (Number(a.episode) - Number(b.episode)));
+  const list = document.getElementById("siteEpisodes");
+  const video = document.getElementById("siteVideo");
+  const embed = document.getElementById("siteEmbed");
+  const status = document.getElementById("siteStatus");
+  function play(item) {
+    if (!item) return;
+    list.querySelectorAll("button").forEach((btn) => btn.classList.toggle("bg-white/20", btn.dataset.id === item.id));
+    const match = String(item.url || item.vimeo || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+    if (match) {
+      video.hidden = true;
+      embed.hidden = false;
+      embed.src = "https://player.vimeo.com/video/" + match[1] + "?autoplay=1";
+      status.textContent = "Playing on Vimeo";
+      return;
+    }
+    embed.hidden = true;
+    embed.src = "";
+    video.hidden = false;
+    if (item.url) {
+      video.src = item.url;
+      status.textContent = "Ready. Press play.";
+    } else status.textContent = "This episode does not have a video yet.";
+  }
+  list.innerHTML = "";
+  episodes.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.id = item.id;
+    btn.className = "mb-2 w-full rounded-lg bg-white/10 px-3 py-2 text-left";
+    btn.textContent = item.episode ? "S" + item.season + " E" + item.episode : item.title;
+    btn.addEventListener("click", () => play(item));
+    list.appendChild(btn);
+  });
+  play(episodes.find((item) => item.id === id) || episodes[0]);
+  panel.scrollIntoView({ behavior: "smooth" });
+}
+document.getElementById("closeSitePlayer").addEventListener("click", () => {
+  document.getElementById("sitePlayer").classList.add("hidden");
+  document.getElementById("siteHome").classList.remove("hidden");
+  document.getElementById("siteEmbed").src = "";
+  document.getElementById("siteVideo").pause();
+});
 document.getElementById("heroPlay").addEventListener("click", () => {
   const item = window.heroItem;
   if (!item) return;
-  location.href = "player.html?id=" + encodeURIComponent(item.id) + "&show=" + encodeURIComponent((item.show || "").toLowerCase());
+  openSitePlayer(item.id, (item.show || "").toLowerCase());
 });
 document.getElementById("heroInfo").addEventListener("click", () => {
   const item = window.heroItem;
@@ -1186,7 +1244,7 @@ async function openCard(e) {
   if (!card) return;
   const show = card.dataset.show || "";
   const id = card.dataset.id || "";
-  location.href = "player.html?id=" + encodeURIComponent(id) + "&show=" + encodeURIComponent(show);
+  openSitePlayer(id, show);
 }
 els.cards.addEventListener("click", openCard);
 document.getElementById("shelves").addEventListener("click", openCard);
