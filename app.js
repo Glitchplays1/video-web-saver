@@ -140,6 +140,7 @@ function applyFile(rows, shelf) {
     item.tag = item.shelf;
     item.show = "";
     item.thumbUrl = row.pic || item.thumbUrl || "";
+    if (row.vimeo) item.url = String(row.vimeo);
     const number = String(id).match(/(\d+)$/);
     if (shelf === "Anime" && number) {
       const n = Number(number[1]);
@@ -581,6 +582,17 @@ function cleanUrl(raw) {
   return "https://" + text;
 }
 
+function vimeoId(url) {
+  const match = String(url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  return match ? match[1] : "";
+}
+function playVimeo(id) {
+  els.player.hidden = true;
+  els.embed.hidden = false;
+  els.embed.src = "https://player.vimeo.com/video/" + encodeURIComponent(id) + "?autoplay=1";
+  els.playerHint.textContent = "Playing on Vimeo";
+  els.dialog.showModal();
+}
 function youtubeId(url) {
   try {
     const u = new URL(cleanUrl(url));
@@ -1093,6 +1105,11 @@ async function openSaved(item, resume) {
   els.player.dataset.itemId = item.id;
   els.playerTitle.textContent = item.title;
   const startAt = resume ? getProgress(item.id) : 0;
+  const vimeo = vimeoId(item.url || item.vimeo || "");
+  if (vimeo) {
+    playVimeo(vimeo);
+    return;
+  }
   const yt = youtubeId(item.url || "");
   if (item.type === "file") {
     const file = await getFile(item.id);
@@ -1249,13 +1266,6 @@ document.getElementById("searchOpen").addEventListener("click", () => {
   const panel = document.getElementById("searchPanel");
   panel.classList.toggle("hidden");
   if (!panel.classList.contains("hidden")) els.search.focus();
-});
-document.getElementById("addOpen").addEventListener("click", () => {
-  document.getElementById("addPanel").classList.toggle("hidden");
-});
-document.getElementById("fileInput").addEventListener("change", () => {
-  const file = document.getElementById("fileInput").files[0];
-  document.getElementById("fileName").textContent = file ? file.name : "No file chosen";
 });
 els.filter.addEventListener("change", () => render());
 els.sort.addEventListener("change", () => render());

@@ -84,32 +84,7 @@
       <button type="button" class="cat rounded px-3 py-2 text-left text-slate-200" data-filter="series">Series</button>
       <button type="button" class="view-link rounded px-3 py-2 text-left text-slate-200" data-view="settings">Settings</button>
     </nav>
-    <button id="addOpen" class="rounded-full bg-blue-500 px-3 py-2 text-left font-semibold" type="button">Add video</button>
-    <div id="addPanel" class="fixed left-44 top-24 z-50 hidden w-80 rounded-2xl bg-black/95 p-4 shadow-xl">
-      <h3 class="text-lg font-semibold">Add a video</h3>
-      <form id="addForm" class="mt-3 space-y-3">
-        <input id="titleInput" class="w-full rounded-lg bg-white/10 px-3 py-2" maxlength="80" placeholder="Title" required />
-        <select id="shelfInput" class="w-full rounded-lg bg-white/10 px-3 py-2">
-          <option>Movies</option>
-          <option>Series</option>
-          <option>Anime</option>
-        </select>
-        <input id="urlInput" class="w-full rounded-lg bg-white/10 px-3 py-2" placeholder="Video link (optional)" />
-        <label class="block rounded-lg border border-dashed border-white/30 p-3 text-center text-sm">
-          <input id="fileInput" type="file" accept="video/*" class="hidden" />
-          Choose a video from this device
-          <em id="fileName" class="mt-1 block">No file chosen</em>
-        </label>
-        <input id="tagInput" type="hidden" />
-        <input id="notesInput" type="hidden" />
-        <input id="thumbInput" type="hidden" />
-        <div id="linkFields"></div>
-        <div id="fileFields"></div>
-        <div id="dropZone"></div>
-        <button id="saveBtn" class="w-full rounded-full bg-blue-500 py-2 font-semibold" type="submit">Save and play</button>
-        <p id="saveStatus" class="min-h-[1.2em] text-sm text-emerald-300"></p>
-      </form>
-    </div>
+    <button id="searchOpen" class="rounded-full bg-white/10 px-3 py-2 text-left" type="button">⌕ Search</button>
     <div id="searchPanel" class="fixed left-44 top-24 z-50 hidden w-72 rounded-2xl bg-black/95 p-3 shadow-xl">
       <form id="navSearch" class="flex items-center rounded-full bg-white/10 px-3" role="search">
         <span class="text-slate-300">⌕</span>
@@ -279,7 +254,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=46"></script>
+  <script src="app.js?v=47"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
