@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>Video Player</title>
+  <title>Yaflix</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     * { box-sizing: border-box; }
@@ -16,8 +16,8 @@
     h1 { font-size: clamp(20px, 3vw, 28px); margin: 0; letter-spacing: -.03em; }
     .sub { color: #98a8c3; font-size: 13px; margin-top: 3px; }
     .layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
-    .screen { background: #000; border: 1px solid #26344b; border-radius: 18px 18px 0 0; overflow: hidden; box-shadow: 0 24px 70px #0009; }
-    video, iframe { width: 100%; display: block; max-height: 72vh; aspect-ratio: 16 / 9; background: #000; border: 0; object-fit: contain; }
+    .screen { position: relative; background: #000; border: 1px solid #26344b; border-radius: 18px 18px 0 0; overflow: hidden; box-shadow: 0 24px 70px #0009; aspect-ratio: 16 / 9; }
+    video, iframe { position: absolute; inset: 0; width: 100%; height: 100%; background: #000; border: 0; }
     .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 15px; border: 1px solid #26344b; border-top: 0; border-radius: 0 0 18px 18px; background: #0d1421; }
     button, select { appearance: none; color: #eef4ff; background: #172338; border: 1px solid #2d405d; border-radius: 10px; padding: 10px 13px; font: inherit; font-size: 13px; cursor: pointer; }
     button:hover, select:hover { background: #223553; }
@@ -35,9 +35,9 @@
   <main>
     <header class="top">
       <div class="brand">
-        <div class="mark" aria-hidden="true">▶</div>
+        <img class="mark" src="yaflix-logo.svg" alt="Yaflix" style="width:120px;height:auto;background:none;box-shadow:none" />
         <div>
-          <h1 id="title">Video Player</h1>
+          <h1 id="title">Yaflix</h1>
           <div class="sub" id="sub">Your video, in a browser</div>
         </div>
       </div>
