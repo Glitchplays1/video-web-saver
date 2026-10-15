@@ -6,6 +6,9 @@
   <title>Yaflix</title>
   <meta name="description" content="Save your own videos and allowed links. Pictures stay in this browser." />
   <link rel="icon" href="yaflix-logo.svg" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="apple-touch-icon" href="yaflix-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="styles.css?v=7" rel="stylesheet" />
@@ -248,7 +251,7 @@
       <input id="autoplayToggle" type="checkbox" class="h-5 w-5" checked />
       Start the next episode after a countdown
     </label>
-    <button id="resetBg" class="mt-4 rounded-full border border-slate-500 px-4 py-2" type="button">Reset background</button>
+    <button id="installBtn" class="mt-4 rounded-full border border-slate-500 px-4 py-2" type="button">Add to Home Screen</button>
   </section>
 
   <section id="about" data-view-panel="about" class="relative z-10 mx-auto my-6 ml-48 hidden w-[min(860px,calc(100%-13rem))] rounded-2xl bg-bar p-5">
@@ -401,6 +404,20 @@
       showView("library");
     });
     document.getElementById("navSearch").addEventListener("submit", function (e) { e.preventDefault(); });
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+    var installEvent = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      installEvent = e;
+    });
+    document.getElementById("installBtn").addEventListener("click", function () {
+      if (installEvent) {
+        installEvent.prompt();
+        installEvent = null;
+        return;
+      }
+      alert("On iPhone: tap Share, then Add to Home Screen. On Android: open the browser menu and tap Add to Home screen.");
+    });
     window.addEventListener("load", function () {
       setTimeout(function () {
         var el = document.getElementById("loader");

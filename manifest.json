@@ -1,0 +1,13 @@
+{
+  "name": "Yaflix",
+  "short_name": "Yaflix",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    { "src": "yaflix-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "yaflix-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
