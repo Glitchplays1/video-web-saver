@@ -354,6 +354,7 @@
     document.getElementById("colorShift").checked = shiftOn;
     setDark(darkOn);
     if (darkOn && shiftOn) startShift();
+    document.getElementById("darkSwitch").addEventListener("change", function (e) { setDark(e.target.checked); });
     document.getElementById("mobileSwitch").addEventListener("change", function (e) {
       document.body.classList.toggle("mobile", e.target.checked);
       localStorage.setItem("yaflix-mobile", e.target.checked ? "on" : "off");
