@@ -332,8 +332,7 @@ function startBackdropCycle() {
     if (backdrop) backdrop.src = pic;
     const hero = document.getElementById("heroImage");
     if (hero) hero.src = pic;
-    const title = document.getElementById("heroTitle");
-    if (title && !window.heroLocked) title.textContent = item.show || item.title;
+    fillHero(item);
   };
   show();
   backdropTimer = setInterval(show, 5000);
@@ -1122,8 +1121,13 @@ document.getElementById("heroPlay").addEventListener("click", () => {
 document.getElementById("heroInfo").addEventListener("click", () => {
   const item = window.heroItem;
   if (!item) return;
-  if (item.show) openSeries((item.show || "").toLowerCase());
-  else openDetail(item);
+  openSitePlayer(item.id, (item.show || "").toLowerCase());
+});
+document.getElementById("homeHero").addEventListener("click", (e) => {
+  if (e.target.closest("button")) return;
+  const item = window.heroItem;
+  if (!item) return;
+  openSitePlayer(item.id, (item.show || "").toLowerCase());
 });
 function escapeHtml(value) {
   return String(value)
