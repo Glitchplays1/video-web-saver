@@ -95,14 +95,6 @@
     <button id="switchProfile" class="h-9 w-9 overflow-hidden rounded bg-slate-700" type="button" aria-label="Switch profile">
       <img id="cornerPic" class="h-full w-full object-cover" alt="" />
     </button>
-    <label class="flex items-center gap-2 text-sm font-medium">
-      <input id="mobileSwitch" type="checkbox" class="h-5 w-5" />
-      Mobile
-    </label>
-    <label class="flex items-center gap-2 text-sm font-medium">
-      <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
-      Dark
-    </label>
   </header>
 
   <div id="alertBar" class="hidden" hidden></div>
@@ -216,6 +208,18 @@
   </section>
   <section id="settings" data-view-panel="settings" class="mx-auto my-6 hidden w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
     <h2 class="text-2xl font-bold">Background settings</h2>
+    <label class="mt-4 flex items-center gap-3 text-sm">
+      <input id="mobileSwitch" type="checkbox" class="h-5 w-5" />
+      Mobile
+    </label>
+    <label class="mt-3 flex items-center gap-3 text-sm">
+      <input id="tvSwitch" type="checkbox" class="h-5 w-5" />
+      TV
+    </label>
+    <label class="mt-3 flex items-center gap-3 text-sm">
+      <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
+      Dark
+    </label>
     <label class="mt-4 block text-sm">Audio
       <select id="audioSetting" class="mt-2 rounded-lg bg-ink px-3 py-2">
         <option value="sub">Subbed</option>
