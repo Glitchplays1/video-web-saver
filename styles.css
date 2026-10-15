@@ -321,7 +321,15 @@ body.mobile #heroTitle { font-size: 2rem; }
 body.mobile #sitePlayer .grid { grid-template-columns: 1fr; }
 body.mobile #shelves article { width: 120px; min-width: 120px; }
 body.mobile .row-arrow { height: 40px; width: 40px; }
-body.mobile #mobileMenu { display: block; }
+@media (orientation: landscape) and (max-height: 500px) {
+  #sideBar { display: none !important; }
+  #library { margin-left: 0 !important; width: 100% !important; padding-top: 56px; }
+  #mobileMenu { display: block; }
+  #homeHero, #homeHero .relative { min-height: 220px; }
+  #heroTitle { font-size: 1.7rem; }
+  #shelves article { width: 110px; min-width: 110px; }
+}
+body.menu-open #sideBar { display: flex !important; position: fixed; left: 0; top: 0; z-index: 50; height: 100vh; width: 16rem; }
 #cards { display: flex; gap: 12px; overflow-x: auto; }
 .poster-row { scrollbar-width: none; }
 .poster-row::-webkit-scrollbar { display: none; }
