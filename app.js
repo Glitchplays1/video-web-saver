@@ -202,6 +202,7 @@ function addAnimeSeasons() {
       item.notes = "Season " + season + ", episode " + episode;
       item.thumbUrl = poster;
       item.url = "videos/anime/04-the-seven-deadly-sins/season-" + season + "/episode-" + episode + ".mp4";
+      if (season === 1 && episode === 1) item.url = "https://vimeo.com/1236263080";
     }
   }
 }
