@@ -333,5 +333,5 @@ footer .sub { background: var(--bar); margin-top: 10px; padding: 8px; }
   z-index: 30;
   position: relative;
 }
-.row-arrow { border: 0; color: #fff; cursor: pointer; }
+.row-arrow { border: 0; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; }
 #homeHero { box-shadow: inset 0 -80px 80px #0b1220; }

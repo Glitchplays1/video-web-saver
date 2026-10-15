@@ -8,7 +8,7 @@
   <link rel="icon" href="yaflix-logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="styles.css?v=3" rel="stylesheet" />
+  <link href="styles.css?v=5" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -121,11 +121,11 @@
             <button id="audioDub" class="rounded-full bg-white/20 px-4 py-1" type="button">Dub</button>
           </div>
         </div>
-        <aside class="rounded-2xl bg-[#11131a] p-3">
-          <div class="mb-3 flex items-center gap-3">
-            <img id="showPoster" class="h-16 w-12 rounded object-cover" alt="" />
-            <div>
-              <h2 id="showName" class="text-lg font-semibold">Yaflix</h2>
+        <aside class="w-full min-w-0 rounded-2xl bg-[#11131a] p-4">
+          <div class="mb-4 flex items-center gap-3">
+            <img id="showPoster" class="h-16 w-12 shrink-0 rounded object-cover" alt="" />
+            <div class="min-w-0">
+              <h2 id="showName" class="truncate text-base font-semibold leading-tight">Yaflix</h2>
               <p class="text-xs text-slate-400">TV Series</p>
             </div>
           </div>
@@ -292,7 +292,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=59"></script>
+  <script src="app.js?v=60"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

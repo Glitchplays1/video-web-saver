@@ -356,7 +356,7 @@ function drawProfiles() {
     btn.type = "button";
     btn.className = "flex items-center gap-4 text-left text-white";
     const face = document.createElement("span");
-    face.className = "grid h-16 w-16 place-items-center overflow-hidden rounded-md bg-slate-700 text-2xl" + (selected ? " ring-4 ring-white" : "");
+    face.className = "grid h-16 w-16 place-items-center overflow-hidden rounded-md bg-slate-700 text-2xl leading-none" + (selected ? " ring-4 ring-white" : "");
     if (p.pic) {
       const img = document.createElement("img");
       img.className = "h-full w-full object-cover";
@@ -391,7 +391,7 @@ function drawProfiles() {
   });
   const add = document.createElement("button");
   add.type = "button";
-  add.className = "grid h-16 w-16 place-items-center rounded-md border-2 border-white text-4xl";
+  add.className = "grid h-16 w-16 place-items-center rounded-md border-2 border-white text-3xl leading-none";
   add.textContent = "+";
   add.addEventListener("click", () => openProfileForm(null));
   row.appendChild(add);
@@ -963,8 +963,8 @@ function buildRow(title, cards, moreItems) {
   const right = document.createElement("button");
   left.type = "button";
   right.type = "button";
-  left.className = "row-arrow absolute left-1 top-1/2 z-20 grid h-14 w-14 -translate-y-1/2 place-items-center rounded-full bg-black/80 text-3xl";
-  right.className = "row-arrow absolute right-1 top-1/2 z-20 grid h-14 w-14 -translate-y-1/2 place-items-center rounded-full bg-black/80 text-3xl";
+  left.className = "row-arrow absolute left-1 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-black/80 text-3xl leading-none";
+  right.className = "row-arrow absolute right-1 top-1/2 z-20 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-black/80 text-3xl leading-none";
   left.textContent = "‹";
   right.textContent = "›";
   const row = document.createElement("div");
@@ -1079,6 +1079,7 @@ function openSitePlayer(id, show) {
       }
     }
   }
+  episodes = episodes.filter((item) => Number(item.episode) > 0);
   episodes.sort((a, b) => (Number(a.season) - Number(b.season)) || (Number(a.episode) - Number(b.episode)));
   const list = document.getElementById("siteEpisodes");
   const video = document.getElementById("siteVideo");
@@ -1128,8 +1129,8 @@ function openSitePlayer(id, show) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.dataset.id = item.id;
-      btn.className = "grid h-10 place-items-center rounded-lg bg-[#1c2030] text-sm";
-      btn.textContent = item.episode || item.title;
+      btn.className = "grid h-11 w-11 place-items-center rounded-lg bg-[#1c2030] text-sm leading-none";
+      btn.textContent = item.episode;
       btn.addEventListener("click", () => play(item));
       list.appendChild(btn);
     });
