@@ -15,7 +15,7 @@
     .mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: linear-gradient(135deg, #69e0ff, #7466ff); color: #07101e; font-size: 20px; box-shadow: 0 6px 26px #4a83ff55; }
     h1 { font-size: clamp(20px, 3vw, 28px); margin: 0; letter-spacing: -.03em; }
     .sub { color: #98a8c3; font-size: 13px; margin-top: 3px; }
-    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
     .screen { background: #000; border: 1px solid #26344b; border-radius: 18px 18px 0 0; overflow: hidden; box-shadow: 0 24px 70px #0009; }
     video, iframe { width: 100%; display: block; max-height: 72vh; aspect-ratio: 16 / 9; background: #000; border: 0; object-fit: contain; }
     .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 15px; border: 1px solid #26344b; border-top: 0; border-radius: 0 0 18px 18px; background: #0d1421; }
@@ -25,11 +25,10 @@
     label { display: flex; align-items: center; gap: 8px; color: #aab8cf; font-size: 13px; }
     #status { min-height: 20px; margin: 13px 3px 0; color: #91a4c2; font-size: 13px; }
     aside { background: #0d1421; border: 1px solid #26344b; border-radius: 18px; padding: 14px; max-height: 80vh; overflow: auto; }
-    aside h2 { margin: 0 0 10px; font-size: 18px; }
     .ep { display: block; width: 100%; text-align: left; margin-bottom: 8px; }
     .ep.on { outline: 2px solid #6bdfff; }
-    a.back { color: #b9c8df; text-decoration: none; }
-    @media (max-width: 800px) { body { padding: 12px; } .layout { grid-template-columns: 1fr; } }
+    a { color: #b9c8df; }
+    @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -42,15 +41,15 @@
           <div class="sub" id="sub">Your video, in a browser</div>
         </div>
       </div>
-      <a class="back" href="index.html">Back to Yaflix</a>
+      <a href="index.html">Back to Yaflix</a>
     </header>
     <div class="layout">
       <section>
-        <section class="screen" aria-label="Video playback">
+        <section class="screen">
           <video id="video" controls preload="metadata" playsinline hidden></video>
-          <iframe id="embed" title="Vimeo player" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen hidden></iframe>
+          <iframe id="embed" title="Vimeo player" allow="autoplay; fullscreen" allowfullscreen hidden></iframe>
         </section>
-        <section class="tools" aria-label="Extra playback controls">
+        <section class="tools">
           <button type="button" id="back">↶ 10 sec</button>
           <button type="button" id="play">▶ Play</button>
           <button type="button" id="forward">10 sec ↷</button>
@@ -59,16 +58,13 @@
           <label for="speed">Speed
             <select id="speed">
               <option value="0.5">0.5×</option>
-              <option value="0.75">0.75×</option>
               <option value="1" selected>1×</option>
-              <option value="1.25">1.25×</option>
               <option value="1.5">1.5×</option>
-              <option value="1.75">1.75×</option>
               <option value="2">2×</option>
             </select>
           </label>
         </section>
-        <p id="status" role="status">Ready. Press Play to start.</p>
+        <p id="status">Ready. Press Play to start.</p>
       </section>
       <aside>
         <h2>Episodes</h2>
@@ -80,67 +76,45 @@
     const video = document.getElementById("video");
     const embed = document.getElementById("embed");
     const playButton = document.getElementById("play");
-    const muteButton = document.getElementById("mute");
     const status = document.getElementById("status");
     const params = new URLSearchParams(location.search);
-    const show = (params.get("show") || "").toLowerCase();
-    const startId = params.get("id") || "";
-    let library = [];
-    try { library = JSON.parse(localStorage.getItem("yaflix-library") || "[]"); } catch { library = []; }
-    function sevenList() {
-      const list = [];
-      for (let season = 1; season <= 5; season += 1) {
-        for (let episode = 1; episode <= 24; episode += 1) {
-          list.push({
-            id: "anime-04-s" + season + "e" + episode,
-            title: "Episode " + episode,
-            show: "The Seven Deadly Sins",
-            season: season,
-            episode: episode,
-            url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : ""
-          });
-        }
+    const startId = params.get("id") || "anime-04-s1e1";
+    const episodes = [];
+    for (let season = 1; season <= 5; season += 1) {
+      for (let episode = 1; episode <= 24; episode += 1) {
+        episodes.push({
+          id: "anime-04-s" + season + "e" + episode,
+          season: season,
+          episode: episode,
+          title: "Episode " + episode,
+          url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : ""
+        });
       }
-      return list;
-    }
-    let episodes = library.filter((item) => (item.show || "").toLowerCase() === show || item.id === startId);
-    if (!episodes.length || show.includes("seven") || startId.indexOf("anime-04") === 0) episodes = sevenList();
-    episodes.sort((a, b) => (Number(a.season) - Number(b.season)) || (Number(a.episode) - Number(b.episode)));
-    const list = document.getElementById("episodes");
-    function vimeoId(url) {
-      const match = String(url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
-      return match ? match[1] : "";
     }
     function play(item) {
-      if (!item) return;
-      document.getElementById("title").textContent = item.show || item.title || "Video Player";
-      document.getElementById("sub").textContent = item.episode ? "Season " + item.season + " · Episode " + item.episode : "Your video, in a browser";
+      document.getElementById("title").textContent = "The Seven Deadly Sins";
+      document.getElementById("sub").textContent = "Season " + item.season + " · Episode " + item.episode;
       document.querySelectorAll(".ep").forEach((btn) => btn.classList.toggle("on", btn.dataset.id === item.id));
-      const vimeo = vimeoId(item.url || item.vimeo || "");
-      if (vimeo) {
+      const match = String(item.url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+      if (match) {
         video.hidden = true;
-        video.removeAttribute("src");
         embed.hidden = false;
-        embed.src = "https://player.vimeo.com/video/" + encodeURIComponent(vimeo) + "?autoplay=1";
+        embed.src = "https://player.vimeo.com/video/" + match[1] + "?autoplay=1";
         status.textContent = "Playing on Vimeo";
         return;
       }
       embed.hidden = true;
       embed.src = "";
       video.hidden = false;
-      if (item.url) {
-        video.src = item.url;
-        status.textContent = "Ready. Press Play to start.";
-      } else {
-        status.textContent = "This episode does not have a video yet.";
-      }
+      status.textContent = "This episode does not have a video yet.";
     }
+    const list = document.getElementById("episodes");
     episodes.forEach((item) => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "ep";
       btn.dataset.id = item.id;
-      btn.textContent = item.episode ? "S" + item.season + " E" + item.episode : item.title;
+      btn.textContent = "S" + item.season + " E" + item.episode;
       btn.addEventListener("click", () => play(item));
       list.appendChild(btn);
     });
@@ -148,11 +122,8 @@
     playButton.addEventListener("click", () => video.paused ? video.play().catch(() => {}) : video.pause());
     document.getElementById("back").addEventListener("click", () => { video.currentTime = Math.max(0, video.currentTime - 10); });
     document.getElementById("forward").addEventListener("click", () => { video.currentTime += 10; });
-    muteButton.addEventListener("click", () => { video.muted = !video.muted; muteButton.textContent = video.muted ? "🔇 Unmute" : "🔊 Mute"; });
+    document.getElementById("mute").addEventListener("click", () => { video.muted = !video.muted; });
     document.getElementById("speed").addEventListener("change", (e) => { video.playbackRate = Number(e.target.value); });
-    video.addEventListener("play", () => { playButton.textContent = "Ⅱ Pause"; });
-    video.addEventListener("pause", () => { playButton.textContent = "▶ Play"; });
-    video.addEventListener("error", () => { status.textContent = "Could not load that video."; });
   </script>
 </body>
 </html>
