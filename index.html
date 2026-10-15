@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="yaflix-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="styles.css?v=7" rel="stylesheet" />
+  <link href="styles.css?v=8" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -100,7 +100,7 @@
     </button>
   </header>
 
-  <div id="alertBar" class="hidden" hidden></div>
+  <button id="mobileMenu" class="fixed left-3 top-3 z-50 hidden rounded-full bg-black/80 px-4 py-2" type="button">Menu</button>
 
   <main id="library" data-view-panel="library" class="ml-44 mt-0 w-[calc(100%-11rem)]">
     <section id="sitePlayer" class="hidden p-4">
@@ -299,7 +299,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=60"></script>
+  <script src="app.js?v=61"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

@@ -1164,6 +1164,9 @@ document.getElementById("closeSitePlayer").addEventListener("click", () => {
 document.getElementById("audioSetting").addEventListener("change", () => {
   localStorage.setItem("yaflix-audio", document.getElementById("audioSetting").value);
 });
+document.getElementById("mobileMenu").addEventListener("click", () => {
+  document.body.classList.toggle("menu-open");
+});
 document.getElementById("heroPlay").addEventListener("click", () => {
   const item = window.heroItem;
   if (!item) return;
