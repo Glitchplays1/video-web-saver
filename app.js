@@ -1182,45 +1182,12 @@ function closeMedia() {
 }
 
 async function openCard(e) {
-  if (e.target.closest("a")) return;
-  const showEl = e.target.closest("[data-show]");
-  const infoEl = e.target.closest("[data-info]");
-  const play = e.target.closest("[data-play]");
-  const del = e.target.closest("[data-delete]");
-  const fav = e.target.closest("[data-fav]");
-  if (infoEl && !play && !del && !fav) {
-    const item = library.find((i) => i.id === infoEl.getAttribute("data-info"));
-    if (!item) return;
-    location.href = "player.html?id=" + encodeURIComponent(item.id) + "&show=" + encodeURIComponent(item.show || "");
-    return;
-  }
-  if (showEl && !play && !del && !fav) {
-    if (isPhone()) {
-      location.href = "player.html?show=" + encodeURIComponent(showEl.getAttribute("data-show"));
-    } else location.href = "player.html?show=" + encodeURIComponent(showEl.getAttribute("data-show"));
-    return;
-  }
-  if (fav) {
-    const item = library.find((i) => i.id === fav.getAttribute("data-fav"));
-    if (!item) return;
-    item.favorite = !item.favorite;
-    saveMeta();
-    render(item.id);
-    return;
-  }
-  if (play) {
-    const item = library.find((i) => i.id === play.getAttribute("data-play"));
-    await openSaved(item);
-  }
-  if (del) {
-    const id = del.getAttribute("data-delete");
-    const item = library.find((i) => i.id === id);
-    if (!item || !confirm('Delete "' + item.title + '"?')) return;
-    library = library.filter((i) => i.id !== id);
-    saveMeta();
-    if (item.type === "file") await deleteStored(id).catch(() => {});
-    render();
-  }
+  if (e.target.closest(".row-arrow") || e.target.closest("#closeMore")) return;
+  const card = e.target.closest("article");
+  if (!card) return;
+  const show = card.dataset.show || "";
+  const id = card.dataset.id || "";
+  location.href = "player.html?id=" + encodeURIComponent(id) + "&show=" + encodeURIComponent(show);
 }
 els.cards.addEventListener("click", openCard);
 document.getElementById("shelves").addEventListener("click", openCard);
