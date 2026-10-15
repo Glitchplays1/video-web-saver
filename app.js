@@ -202,7 +202,8 @@ function addAnimeSeasons() {
       item.notes = "Season " + season + ", episode " + episode;
       item.thumbUrl = poster;
       item.url = "videos/anime/04-the-seven-deadly-sins/season-" + season + "/episode-" + episode + ".mp4";
-      if (season === 1 && episode === 1) item.url = "https://vimeo.com/1236322072";
+      if (season === 1 && episode === 1) item.url = "https://vimeo.com/1236263080";
+      if (season === 1 && episode === 2) item.url = "https://vimeo.com/1236322072";
     }
   }
 }
@@ -1066,7 +1067,8 @@ function openSitePlayer(id, show) {
     episodes = [];
     for (let season = 1; season <= 5; season += 1) {
       for (let episode = 1; episode <= 24; episode += 1) {
-        episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url: season === 1 && episode === 1 ? "https://vimeo.com/1236322072" : "" });
+        const url = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : "";
+        episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url });
       }
     }
   }
