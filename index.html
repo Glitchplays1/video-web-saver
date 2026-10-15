@@ -201,9 +201,11 @@
   </section>
   <section id="settings" data-view-panel="settings" class="mx-auto my-6 hidden w-[min(860px,calc(100%-2rem))] rounded-2xl bg-bar p-5">
     <h2 class="text-2xl font-bold">Background settings</h2>
-    <label class="mt-4 flex items-center gap-3 text-sm">
-      <input id="darkMode" type="checkbox" class="h-5 w-5" checked />
-      Dark mode
+    <label class="mt-4 block text-sm">Audio
+      <select id="audioSetting" class="mt-2 rounded-lg bg-ink px-3 py-2">
+        <option value="sub">Subbed</option>
+        <option value="dub">Dubbed</option>
+      </select>
     </label>
     <p class="mt-1 text-slate-300">Pick a color, or turn on color changing. Your choice stays in this browser.</p>
     <div id="colorSwatches" class="mt-4 flex flex-wrap gap-3">
@@ -275,7 +277,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=57"></script>
+  <script src="app.js?v=58"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

@@ -1085,7 +1085,7 @@ function openSitePlayer(id, show) {
   const embed = document.getElementById("siteEmbed");
   const status = document.getElementById("siteStatus");
   let current = null;
-  let audio = "sub";
+  let audio = localStorage.getItem("yaflix-audio") || "sub";
   function sourceFor(item) {
     return audio === "dub" && item.dubUrl ? item.dubUrl : item.url;
   }
@@ -1109,8 +1109,9 @@ function openSitePlayer(id, show) {
       status.textContent = "Ready. Press play.";
     } else status.textContent = audio === "dub" ? "No dub for this episode yet." : "This episode does not have a video yet.";
   }
-  document.getElementById("audioSub").onclick = () => { audio = "sub"; document.getElementById("audioSub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioDub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
-  document.getElementById("audioDub").onclick = () => { audio = "dub"; document.getElementById("audioDub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioSub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
+  document.getElementById("audioSub").onclick = () => { audio = "sub"; localStorage.setItem("yaflix-audio", "sub"); document.getElementById("audioSetting").value = "sub"; document.getElementById("audioSub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioDub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
+  document.getElementById("audioDub").onclick = () => { audio = "dub"; localStorage.setItem("yaflix-audio", "dub"); document.getElementById("audioSetting").value = "dub"; document.getElementById("audioDub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioSub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
+  document.getElementById("audioSetting").value = audio;
   list.innerHTML = "";
   episodes.forEach((item) => {
     const btn = document.createElement("button");
@@ -1129,6 +1130,9 @@ document.getElementById("closeSitePlayer").addEventListener("click", () => {
   document.getElementById("siteHome").classList.remove("hidden");
   document.getElementById("siteEmbed").src = "";
   document.getElementById("siteVideo").pause();
+});
+document.getElementById("audioSetting").addEventListener("change", () => {
+  localStorage.setItem("yaflix-audio", document.getElementById("audioSetting").value);
 });
 document.getElementById("heroPlay").addEventListener("click", () => {
   const item = window.heroItem;
