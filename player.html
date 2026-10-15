@@ -97,7 +97,7 @@
     episodes.sort((a, b) => (Number(a.season) - Number(b.season)) || (Number(a.episode) - Number(b.episode)));
     function play(item) {
       if (!item) return;
-      document.getElementById("title").textContent = item.show || item.title || "Video Player";
+      document.getElementById("title").textContent = "Yaflix";
       document.getElementById("sub").textContent = item.episode ? "Season " + item.season + " · Episode " + item.episode : (item.title || "Your video, in a browser");
       document.querySelectorAll(".ep").forEach((btn) => btn.classList.toggle("on", btn.dataset.id === item.id));
       const match = String(item.url || item.vimeo || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
