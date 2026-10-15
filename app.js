@@ -203,7 +203,10 @@ function addAnimeSeasons() {
       item.thumbUrl = poster;
       item.url = "videos/anime/04-the-seven-deadly-sins/season-" + season + "/episode-" + episode + ".mp4";
       if (season === 1 && episode === 1) item.url = "https://vimeo.com/1236263080";
-      if (season === 1 && episode === 2) item.url = "https://vimeo.com/1236322072";
+      if (season === 1 && episode === 2) {
+        item.url = "https://vimeo.com/1236322072";
+        item.dubUrl = "https://vimeo.com/1236326471";
+      }
     }
   }
 }
@@ -1068,7 +1071,8 @@ function openSitePlayer(id, show) {
     for (let season = 1; season <= 5; season += 1) {
       for (let episode = 1; episode <= 24; episode += 1) {
         const url = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : "";
-        episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url });
+        const dubUrl = season === 1 && episode === 2 ? "https://vimeo.com/1236326471" : "";
+        episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url, dubUrl });
       }
     }
   }
@@ -1077,25 +1081,33 @@ function openSitePlayer(id, show) {
   const video = document.getElementById("siteVideo");
   const embed = document.getElementById("siteEmbed");
   const status = document.getElementById("siteStatus");
+  let current = null;
+  let audio = "sub";
+  function sourceFor(item) {
+    return audio === "dub" && item.dubUrl ? item.dubUrl : item.url;
+  }
   function play(item) {
     if (!item) return;
+    current = item;
     list.querySelectorAll("button").forEach((btn) => btn.classList.toggle("bg-white/20", btn.dataset.id === item.id));
-    const match = String(item.url || item.vimeo || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+    const match = String(sourceFor(item) || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
     if (match) {
       video.hidden = true;
       embed.hidden = false;
       embed.src = "https://player.vimeo.com/video/" + match[1] + "?autoplay=1";
-      status.textContent = "Playing on Vimeo";
+      status.textContent = audio === "dub" && item.dubUrl ? "Playing dub on Vimeo" : "Playing on Vimeo";
       return;
     }
     embed.hidden = true;
     embed.src = "";
     video.hidden = false;
-    if (item.url) {
-      video.src = item.url;
+    if (sourceFor(item)) {
+      video.src = sourceFor(item);
       status.textContent = "Ready. Press play.";
-    } else status.textContent = "This episode does not have a video yet.";
+    } else status.textContent = audio === "dub" ? "No dub for this episode yet." : "This episode does not have a video yet.";
   }
+  document.getElementById("audioSub").onclick = () => { audio = "sub"; document.getElementById("audioSub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioDub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
+  document.getElementById("audioDub").onclick = () => { audio = "dub"; document.getElementById("audioDub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioSub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
   list.innerHTML = "";
   episodes.forEach((item) => {
     const btn = document.createElement("button");
