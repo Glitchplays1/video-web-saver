@@ -1059,8 +1059,7 @@ function fillHero(item) {
 document.getElementById("heroPlay").addEventListener("click", () => {
   const item = window.heroItem;
   if (!item) return;
-  if (item.show) openSeries((item.show || "").toLowerCase());
-  else openSaved(item, false);
+  location.href = "player.html?id=" + encodeURIComponent(item.id) + "&show=" + encodeURIComponent((item.show || "").toLowerCase());
 });
 document.getElementById("heroInfo").addEventListener("click", () => {
   const item = window.heroItem;

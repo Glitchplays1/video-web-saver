@@ -78,24 +78,29 @@
     const playButton = document.getElementById("play");
     const status = document.getElementById("status");
     const params = new URLSearchParams(location.search);
-    const startId = params.get("id") || "anime-04-s1e1";
-    const episodes = [];
-    for (let season = 1; season <= 5; season += 1) {
-      for (let episode = 1; episode <= 24; episode += 1) {
-        episodes.push({
-          id: "anime-04-s" + season + "e" + episode,
-          season: season,
-          episode: episode,
-          title: "Episode " + episode,
-          url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : ""
-        });
+    const show = (params.get("show") || "").toLowerCase();
+    const startId = params.get("id") || "";
+    let library = [];
+    try { library = JSON.parse(localStorage.getItem("yaflix-library") || "[]"); } catch { library = []; }
+    function sevenList() {
+      const list = [];
+      for (let season = 1; season <= 5; season += 1) {
+        for (let episode = 1; episode <= 24; episode += 1) {
+          list.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url: season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : "" });
+        }
       }
+      return list;
     }
+    let episodes = library.filter((item) => (item.show || "").toLowerCase() === show || item.id === startId);
+    if (!episodes.length && (show.includes("seven") || startId.indexOf("anime-04") === 0 || !show)) episodes = sevenList();
+    if (!episodes.length) episodes = library.slice(0, 1);
+    episodes.sort((a, b) => (Number(a.season) - Number(b.season)) || (Number(a.episode) - Number(b.episode)));
     function play(item) {
-      document.getElementById("title").textContent = "The Seven Deadly Sins";
-      document.getElementById("sub").textContent = "Season " + item.season + " · Episode " + item.episode;
+      if (!item) return;
+      document.getElementById("title").textContent = item.show || item.title || "Video Player";
+      document.getElementById("sub").textContent = item.episode ? "Season " + item.season + " · Episode " + item.episode : (item.title || "Your video, in a browser");
       document.querySelectorAll(".ep").forEach((btn) => btn.classList.toggle("on", btn.dataset.id === item.id));
-      const match = String(item.url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+      const match = String(item.url || item.vimeo || "").match(/vimeo\.com\/(?:video\/)?(\d+)/i);
       if (match) {
         video.hidden = true;
         embed.hidden = false;
@@ -106,7 +111,12 @@
       embed.hidden = true;
       embed.src = "";
       video.hidden = false;
-      status.textContent = "This episode does not have a video yet.";
+      if (item.url) {
+        video.src = item.url;
+        status.textContent = "Ready. Press Play to start.";
+      } else {
+        status.textContent = "This episode does not have a video yet.";
+      }
     }
     const list = document.getElementById("episodes");
     episodes.forEach((item) => {
