@@ -8,7 +8,7 @@
   <link rel="icon" href="yaflix-logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="styles.css?v=6" rel="stylesheet" />
+  <link href="styles.css?v=7" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -96,8 +96,8 @@
       <img id="cornerPic" class="h-full w-full object-cover" alt="" />
     </button>
     <label class="flex items-center gap-2 text-sm font-medium">
-      <input id="tvSwitch" type="checkbox" class="h-5 w-5" />
-      TV
+      <input id="mobileSwitch" type="checkbox" class="h-5 w-5" />
+      Mobile
     </label>
     <label class="flex items-center gap-2 text-sm font-medium">
       <input id="darkSwitch" type="checkbox" class="h-5 w-5" checked />
@@ -354,7 +354,14 @@
     document.getElementById("colorShift").checked = shiftOn;
     setDark(darkOn);
     if (darkOn && shiftOn) startShift();
-    document.getElementById("darkSwitch").addEventListener("change", function (e) { setDark(e.target.checked); });
+    document.getElementById("mobileSwitch").addEventListener("change", function (e) {
+      document.body.classList.toggle("mobile", e.target.checked);
+      localStorage.setItem("yaflix-mobile", e.target.checked ? "on" : "off");
+    });
+    if (localStorage.getItem("yaflix-mobile") === "on") {
+      document.body.classList.add("mobile");
+      document.getElementById("mobileSwitch").checked = true;
+    }
     document.getElementById("darkMode").addEventListener("change", function (e) { setDark(e.target.checked); });
     document.getElementById("colorSwatches").addEventListener("click", function (e) {
       var btn = e.target.closest("[data-color]");
