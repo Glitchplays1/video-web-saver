@@ -1112,16 +1112,45 @@ function openSitePlayer(id, show) {
   document.getElementById("audioSub").onclick = () => { audio = "sub"; localStorage.setItem("yaflix-audio", "sub"); document.getElementById("audioSetting").value = "sub"; document.getElementById("audioSub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioDub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
   document.getElementById("audioDub").onclick = () => { audio = "dub"; localStorage.setItem("yaflix-audio", "dub"); document.getElementById("audioSetting").value = "dub"; document.getElementById("audioDub").className = "rounded-full bg-white px-4 py-1 font-semibold text-black"; document.getElementById("audioSub").className = "rounded-full bg-white/20 px-4 py-1"; if (current) play(current); };
   document.getElementById("audioSetting").value = audio;
-  list.innerHTML = "";
-  episodes.forEach((item) => {
+  const first = episodes[0] || {};
+  document.getElementById("showName").textContent = first.show || "Yaflix";
+  document.getElementById("showPoster").src = first.thumbUrl || first.poster || "posters/anime/anime-4.png";
+  const seasons = [...new Set(episodes.map((item) => Number(item.season) || 1))];
+  const menu = document.getElementById("seasonMenu");
+  const label = document.getElementById("seasonLabel");
+  let currentSeason = Number((episodes.find((item) => item.id === id) || first).season) || 1;
+  function paintEpisodes() {
+    const inSeason = episodes.filter((item) => (Number(item.season) || 1) === currentSeason);
+    document.getElementById("episodeCount").textContent = inSeason.length;
+    label.textContent = "Season " + currentSeason;
+    list.innerHTML = "";
+    inSeason.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.id = item.id;
+      btn.className = "grid h-10 place-items-center rounded-lg bg-[#1c2030] text-sm";
+      btn.textContent = item.episode || item.title;
+      btn.addEventListener("click", () => play(item));
+      list.appendChild(btn);
+    });
+  }
+  menu.innerHTML = "";
+  seasons.forEach((season) => {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.dataset.id = item.id;
-    btn.className = "mb-2 w-full rounded-lg bg-white/10 px-3 py-2 text-left";
-    btn.textContent = item.episode ? "S" + item.season + " E" + item.episode : item.title;
-    btn.addEventListener("click", () => play(item));
-    list.appendChild(btn);
+    btn.className = "block w-full px-4 py-2 text-left hover:bg-white/10";
+    btn.textContent = "Season " + season;
+    btn.addEventListener("click", () => {
+      currentSeason = season;
+      menu.classList.add("hidden");
+      paintEpisodes();
+      const firstEp = episodes.find((item) => Number(item.season) === season);
+      if (firstEp) play(firstEp);
+    });
+    menu.appendChild(btn);
   });
+  document.getElementById("seasonToggle").onclick = () => menu.classList.toggle("hidden");
+  paintEpisodes();
   play(episodes.find((item) => item.id === id) || episodes[0]);
   panel.scrollIntoView({ behavior: "smooth" });
 }
