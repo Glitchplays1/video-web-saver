@@ -1018,9 +1018,6 @@ function render(highlightId) {
   if (featured) fillHero(featured);
   const shelves = document.getElementById("shelves");
   if (shelves) shelves.innerHTML = "";
-  const recommended = topRecommendations(items).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
-  if (shelves && recommended.length) shelves.appendChild(buildRow("Recommended for You", recommended, topRecommendations(items)));
-  const anime = loose.filter((item) => (item.shelf || "").toLowerCase() === "anime").concat(Array.from(grouped.values()).flat().filter((item) => (item.shelf || "").toLowerCase() === "anime" && !item.episode));
   const unique = (list) => {
     const seen = new Set();
     return list.filter((item) => {
@@ -1030,13 +1027,31 @@ function render(highlightId) {
       return true;
     });
   };
-  const animeCards = unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime")).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
-  const movieCards = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie"))).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
-  const showCards = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show)).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
-  if (shelves && animeCards.length) shelves.appendChild(buildRow("Anime", animeCards, unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime"))));
-  if (shelves && movieCards.length) shelves.appendChild(buildRow("Movies", movieCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie")))));
-  if (shelves && showCards.length) shelves.appendChild(buildRow("Shows", showCards, unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show))));
+  const landscape = window.matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+  const movieItems = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("movie")));
+  const animeItems = unique(items.filter((item) => (item.shelf || "").toLowerCase() === "anime"));
+  const showItems = unique(items.filter((item) => (item.shelf || "").toLowerCase().includes("series") || item.show));
+  if (landscape) {
+    if (movieItems[0]) fillHero(movieItems[0]);
+    if (shelves && movieItems.length) shelves.appendChild(buildRow("Movies", movieItems.map((item) => cardFor(item, item.show ? item.show.toLowerCase() : "")), movieItems));
+    return;
+  }
+  const recommended = topRecommendations(items).map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  if (shelves && recommended.length) shelves.appendChild(buildRow("Recommended for You", recommended, topRecommendations(items)));
+  const animeCards = animeItems.map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  const movieCards = movieItems.map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  const showCards = showItems.map((item) => cardFor(item, item.show ? item.show.toLowerCase() : ""));
+  if (shelves && animeCards.length) shelves.appendChild(buildRow("Anime", animeCards, animeItems));
+  if (shelves && movieCards.length) shelves.appendChild(buildRow("Movies", movieCards, movieItems));
+  if (shelves && showCards.length) shelves.appendChild(buildRow("Shows", showCards, showItems));
 }
+window.addEventListener("orientationchange", () => render());
+window.addEventListener("resize", () => {
+  if (window.landscapeWas !== window.matchMedia("(orientation: landscape) and (max-height: 500px)").matches) {
+    window.landscapeWas = !window.landscapeWas;
+    render();
+  }
+});
 
 async function fillStoredThumb(item) {
   try {
