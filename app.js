@@ -387,7 +387,7 @@ function drawProfiles() {
       const img = document.createElement("img");
       img.className = "h-full w-full object-cover";
       img.alt = "";
-      img.src = p.pic;
+      img.src = pic;
       face.appendChild(img);
     } else {
       face.textContent = (p.name || "?").slice(0, 1).toUpperCase();
@@ -417,7 +417,7 @@ function drawProfiles() {
       }
       localStorage.setItem("yaflix-watching", p.id);
       const corner = document.getElementById("cornerPic");
-      if (p.pic) corner.src = p.pic;
+      if (p.pic) corner.src = characterFromId(p.pic) || p.pic;
       else corner.removeAttribute("src");
       document.getElementById("switchProfile").style.background = p.color || "#334155";
       closeWho();
