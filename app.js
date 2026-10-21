@@ -210,6 +210,10 @@ function addAnimeSeasons() {
         item.url = "https://vimeo.com/1236322072";
         item.dubUrl = "https://vimeo.com/1236326471";
       }
+      if (season === 1 && episode === 3) {
+        item.url = "https://www.dropbox.com/scl/fi/ouuqi6wtupzkt8ngh1hyf/sub-Episode-3.mp4?rlkey=6gx9o2vxh6ebtq1m0n2tvunjs&st=lkssmu61&dl=1";
+        item.dubUrl = "https://www.dropbox.com/scl/fi/qnwmduy6b7c20xd0mq5jm/Dub-Episode-3.mp4?rlkey=88rev07fjfknvu7fi0q1pigtv&st=lrr65u2v&dl=1";
+      }
     }
   }
 }
@@ -1088,8 +1092,8 @@ function openSitePlayer(id, show) {
     episodes = [];
     for (let season = 1; season <= 5; season += 1) {
       for (let episode = 1; episode <= 24; episode += 1) {
-        const url = season === 1 && episode === 1 ? "https://vimeo.com/1236329644" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : "";
-        const dubUrl = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236326471" : "";
+        const url = season === 1 && episode === 1 ? "https://vimeo.com/1236329644" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/ouuqi6wtupzkt8ngh1hyf/sub-Episode-3.mp4?rlkey=6gx9o2vxh6ebtq1m0n2tvunjs&st=lkssmu61&dl=1" : "";
+        const dubUrl = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236326471" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/qnwmduy6b7c20xd0mq5jm/Dub-Episode-3.mp4?rlkey=88rev07fjfknvu7fi0q1pigtv&st=lrr65u2v&dl=1" : "";
         episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url, dubUrl });
       }
     }
@@ -1103,7 +1107,8 @@ function openSitePlayer(id, show) {
   let current = null;
   let audio = localStorage.getItem("yaflix-audio") || "sub";
   function sourceFor(item) {
-    return audio === "dub" && item.dubUrl ? item.dubUrl : item.url;
+    const raw = audio === "dub" && item.dubUrl ? item.dubUrl : item.url;
+    return String(raw || "").replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("dl=0", "dl=1");
   }
   function play(item) {
     if (!item) return;
