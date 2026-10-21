@@ -237,6 +237,23 @@ let editingProfiles = false;
 try { profiles = JSON.parse(localStorage.getItem(PROFILE_KEY) || "[]"); } catch { profiles = []; }
 if (!Array.isArray(profiles)) profiles = [];
 
+function saveProfilePic(id, pic) {
+  if (!id || !pic) return Promise.resolve();
+  return openDb().then((db) => new Promise((resolve) => {
+    const tx = db.transaction(THUMBS, "readwrite");
+    tx.objectStore(THUMBS).put(pic, "profile-" + id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  }));
+}
+function loadProfilePic(id) {
+  return openDb().then((db) => new Promise((resolve) => {
+    const tx = db.transaction(THUMBS, "readonly");
+    const req = tx.objectStore(THUMBS).get("profile-" + id);
+    req.onsuccess = () => resolve(req.result || "");
+    req.onerror = () => resolve("");
+  }));
+}
 function saveProfiles() {
   const slim = profiles.map((p) => ({ id: p.id, name: p.name, color: p.color, pic: p.pic || "", rating: Number(p.rating) || 2, kids: Number(p.rating) <= 3 }));
   localStorage.setItem(PROFILE_KEY, JSON.stringify(slim));
@@ -374,6 +391,16 @@ function drawProfiles() {
     } else {
       face.textContent = (p.name || "?").slice(0, 1).toUpperCase();
       face.style.background = p.color || "#334155";
+      loadProfilePic(p.id).then((pic) => {
+        if (!pic) return;
+        p.pic = pic;
+        const img = document.createElement("img");
+        img.className = "h-full w-full object-cover";
+        img.alt = "";
+        img.src = pic;
+        face.textContent = "";
+        face.appendChild(img);
+      });
     }
     btn.appendChild(face);
     if (selected) {
@@ -438,8 +465,9 @@ document.getElementById("profilePic").addEventListener("change", () => {
       const size = Math.min(img.width, img.height);
       ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 160, 160);
       const preview = document.getElementById("profilePreview");
-      preview.src = canvas.toDataURL("image/jpeg", 0.7);
+      preview.src = canvas.toDataURL("image/jpeg", 0.6);
       preview.classList.remove("hidden");
+      preview.dataset.ready = "1";
     };
     img.src = reader.result;
   };
@@ -458,17 +486,22 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
       profile.name = name.slice(0, 16);
       profile.rating = rating;
       profile.kids = rating <= 3;
-      if (pic) profile.pic = pic;
+      if (pic) {
+        profile.pic = pic;
+        saveProfilePic(profile.id, pic);
+      }
     }
   } else {
-    profiles.push({
+    const profile = {
       id: uid(),
       name: name.slice(0, 16),
       color: "hsl(" + (profiles.length * 50) + " 45% 35%)",
       pic,
       rating,
       kids: rating <= 3,
-    });
+    };
+    profiles.push(profile);
+    if (pic) saveProfilePic(profile.id, pic);
   }
   editingId = null;
   saveProfiles();
