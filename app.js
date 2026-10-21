@@ -1092,8 +1092,8 @@ function openSitePlayer(id, show) {
     episodes = [];
     for (let season = 1; season <= 5; season += 1) {
       for (let episode = 1; episode <= 24; episode += 1) {
-        const url = season === 1 && episode === 1 ? "https://vimeo.com/1236329644" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/ouuqi6wtupzkt8ngh1hyf/sub-Episode-3.mp4?rlkey=6gx9o2vxh6ebtq1m0n2tvunjs&st=lkssmu61&dl=1" : "";
-        const dubUrl = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236326471" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/qnwmduy6b7c20xd0mq5jm/Dub-Episode-3.mp4?rlkey=88rev07fjfknvu7fi0q1pigtv&st=lrr65u2v&dl=1" : "";
+        const url = season === 1 && episode === 1 ? "https://vimeo.com/1236329644" : season === 1 && episode === 2 ? "https://vimeo.com/1236322072" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/ouuqi6wtupzkt8ngh1hyf/sub-Episode-3.mp4?rlkey=6gx9o2vxh6ebtq1m0n2tvunjs&st=lkssmu61&dl=1" : season === 1 && episode === 4 ? "https://www.dropbox.com/scl/fi/qshu6nwss6fszo05c6lfw/sub-Episode-4.mp4?rlkey=839b231tcuq4owpl0n7jawwmq&st=t455xc2q&dl=1" : "";
+        const dubUrl = season === 1 && episode === 1 ? "https://vimeo.com/1236263080" : season === 1 && episode === 2 ? "https://vimeo.com/1236326471" : season === 1 && episode === 3 ? "https://www.dropbox.com/scl/fi/qnwmduy6b7c20xd0mq5jm/Dub-Episode-3.mp4?rlkey=88rev07fjfknvu7fi0q1pigtv&st=lrr65u2v&dl=1" : season === 1 && episode === 4 ? "https://www.dropbox.com/scl/fi/92fjy81ctldqun88gy9bf/dub-Episode-4.mp4?rlkey=tn59xfdwoc1g6f4ewahm87hh5&st=1sanjdvc&dl=1" : "";
         episodes.push({ id: "anime-04-s" + season + "e" + episode, season, episode, title: "Episode " + episode, show: "The Seven Deadly Sins", url, dubUrl });
       }
     }
