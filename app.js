@@ -382,7 +382,8 @@ function drawProfiles() {
     btn.className = "flex items-center gap-4 text-left text-white";
     const face = document.createElement("span");
     face.className = "grid h-16 w-16 place-items-center overflow-hidden rounded-md bg-slate-700 text-2xl leading-none" + (selected ? " ring-4 ring-white" : "");
-    if (p.pic) {
+    const pic = characterFromId(p.pic) || (String(p.pic || "").startsWith("data:") ? p.pic : "");
+    if (pic) {
       const img = document.createElement("img");
       img.className = "h-full w-full object-cover";
       img.alt = "";
@@ -467,21 +468,27 @@ function characterPic(color, kind) {
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><rect width="160" height="160" fill="' + color + '"/>' + (faces[kind] || faces.smile) + '</svg>';
   return "data:image/svg+xml," + encodeURIComponent(svg);
 }
+const CHARACTER_COLORS = ["#0f766e", "#b45309", "#1d4ed8", "#be123c", "#65a30d", "#7c3aed", "#c2410c", "#0e7490", "#a16207", "#db2777"];
+const CHARACTER_KINDS = ["smile", "glasses", "star", "robot", "cat", "alien", "ninja", "crown", "heart", "check"];
+function characterFromId(id) {
+  const n = Number(String(id || "").replace("char:", ""));
+  if (!Number.isFinite(n) || n < 0 || n >= CHARACTER_KINDS.length) return "";
+  return characterPic(CHARACTER_COLORS[n], CHARACTER_KINDS[n]);
+}
 function paintCharacters() {
   const grid = document.getElementById("characterGrid");
   if (!grid || grid.childElementCount) return;
-  const colors = ["#0f766e", "#b45309", "#1d4ed8", "#be123c", "#65a30d", "#7c3aed", "#c2410c", "#0e7490", "#a16207", "#db2777"];
-  const kinds = ["smile", "glasses", "star", "robot", "cat", "alien", "ninja", "crown", "heart", "check"];
-  kinds.forEach((kind, i) => {
+  CHARACTER_KINDS.forEach((kind, i) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "h-12 w-12 overflow-hidden rounded-md";
-    const pic = characterPic(colors[i], kind);
+    const pic = characterPic(CHARACTER_COLORS[i], kind);
     btn.innerHTML = '<img class="h-full w-full object-cover" alt="">';
     btn.querySelector("img").src = pic;
     btn.addEventListener("click", () => {
       const preview = document.getElementById("profilePreview");
       preview.src = pic;
+      preview.dataset.char = "char:" + i;
       preview.classList.remove("hidden");
     });
     grid.appendChild(btn);
@@ -493,7 +500,7 @@ document.getElementById("profileForm").addEventListener("submit", (e) => {
   const name = document.getElementById("profileName").value.trim();
   if (!name) return;
   const preview = document.getElementById("profilePreview");
-  const pic = preview.src && preview.src.startsWith("data:") ? preview.src : "";
+  const pic = preview.dataset.char || (preview.src && preview.src.startsWith("data:") ? preview.src : "");
   const rating = Number(document.getElementById("profileRating").value) || 2;
   if (editingId) {
     const profile = profiles.find((item) => item.id === editingId);
