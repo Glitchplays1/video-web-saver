@@ -451,28 +451,43 @@ document.getElementById("editProfiles").addEventListener("click", () => {
   editingProfiles = !editingProfiles;
   drawProfiles();
 });
-document.getElementById("profilePic").addEventListener("change", () => {
-  const file = document.getElementById("profilePic").files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = 160;
-      canvas.height = 160;
-      const ctx = canvas.getContext("2d");
-      const size = Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 160, 160);
-      const preview = document.getElementById("profilePreview");
-      preview.src = canvas.toDataURL("image/jpeg", 0.6);
-      preview.classList.remove("hidden");
-      preview.dataset.ready = "1";
-    };
-    img.src = reader.result;
+function characterPic(color, kind) {
+  const faces = {
+    smile: '<circle cx="48" cy="42" r="6" fill="#fff"/><circle cx="112" cy="42" r="6" fill="#fff"/><path d="M40 78 Q80 112 120 78" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>',
+    glasses: '<rect x="30" y="34" width="36" height="22" rx="4" fill="none" stroke="#fff" stroke-width="6"/><rect x="94" y="34" width="36" height="22" rx="4" fill="none" stroke="#fff" stroke-width="6"/><path d="M66 45 H94" stroke="#fff" stroke-width="6"/><path d="M48 90 Q80 112 112 90" stroke="#fff" stroke-width="8" fill="none"/>',
+    star: '<polygon points="80,22 90,54 124,54 96,74 106,108 80,88 54,108 64,74 36,54 70,54" fill="#fff"/>',
+    robot: '<rect x="36" y="28" width="88" height="64" rx="8" fill="none" stroke="#fff" stroke-width="6"/><rect x="52" y="46" width="16" height="16" fill="#fff"/><rect x="92" y="46" width="16" height="16" fill="#fff"/><rect x="58" y="76" width="44" height="8" fill="#fff"/>',
+    cat: '<path d="M36 50 L48 18 L64 46" fill="#fff"/><path d="M96 46 L112 18 L124 50" fill="#fff"/><circle cx="62" cy="70" r="6" fill="#fff"/><circle cx="98" cy="70" r="6" fill="#fff"/><path d="M72 86 Q80 96 88 86" stroke="#fff" stroke-width="6" fill="none"/>',
+    alien: '<ellipse cx="80" cy="70" rx="40" ry="28" fill="none" stroke="#fff" stroke-width="6"/><ellipse cx="64" cy="68" rx="8" ry="12" fill="#fff"/><ellipse cx="96" cy="68" rx="8" ry="12" fill="#fff"/>',
+    ninja: '<path d="M30 40 H130 V90 H30 Z" fill="#111"/><rect x="36" y="52" width="28" height="10" fill="#fff"/><rect x="96" y="52" width="28" height="10" fill="#fff"/>',
+    crown: '<path d="M30 90 H130 L118 40 L90 70 L80 28 L70 70 L42 40 Z" fill="#fff"/>',
+    heart: '<path d="M80 108 C40 78 28 48 48 36 C60 28 74 36 80 50 C86 36 100 28 112 36 C132 48 120 78 80 108 Z" fill="#fff"/>',
+    check: '<circle cx="80" cy="80" r="42" fill="none" stroke="#fff" stroke-width="8"/><path d="M52 82 L72 102 L112 56" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round"/>'
   };
-  reader.readAsDataURL(file);
-});
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><rect width="160" height="160" fill="' + color + '"/>' + (faces[kind] || faces.smile) + '</svg>';
+  return "data:image/svg+xml," + encodeURIComponent(svg);
+}
+function paintCharacters() {
+  const grid = document.getElementById("characterGrid");
+  if (!grid || grid.childElementCount) return;
+  const colors = ["#0f766e", "#b45309", "#1d4ed8", "#be123c", "#65a30d", "#7c3aed", "#c2410c", "#0e7490", "#a16207", "#db2777"];
+  const kinds = ["smile", "glasses", "star", "robot", "cat", "alien", "ninja", "crown", "heart", "check"];
+  kinds.forEach((kind, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "h-12 w-12 overflow-hidden rounded-md";
+    const pic = characterPic(colors[i], kind);
+    btn.innerHTML = '<img class="h-full w-full object-cover" alt="">';
+    btn.querySelector("img").src = pic;
+    btn.addEventListener("click", () => {
+      const preview = document.getElementById("profilePreview");
+      preview.src = pic;
+      preview.classList.remove("hidden");
+    });
+    grid.appendChild(btn);
+  });
+}
+paintCharacters();
 document.getElementById("profileForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("profileName").value.trim();

@@ -55,11 +55,9 @@
         <label class="block text-sm">First name
           <input id="profileName" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="16" placeholder="First name" />
         </label>
-        <label class="mt-3 block cursor-pointer rounded-xl border border-dashed border-slate-500 p-4 text-center text-sm">
-          <input id="profilePic" type="file" accept="image/*" class="hidden" />
-          Add a picture from your files
-          <img id="profilePreview" class="mx-auto mt-3 hidden h-20 w-20 rounded-full object-cover" alt="" />
-        </label>
+        <p class="mt-3 text-sm">Choose a character</p>
+        <div id="characterGrid" class="mt-2 grid grid-cols-5 gap-2"></div>
+        <img id="profilePreview" class="mx-auto mt-3 hidden h-20 w-20 rounded-md object-cover" alt="" />
         <button id="profileNext" class="mt-4 w-full rounded-md bg-white py-2 font-bold text-black" type="button">Next</button>
       </div>
       <div id="profileStep2" class="hidden">
@@ -299,7 +297,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=66"></script>
+  <script src="app.js?v=67"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
