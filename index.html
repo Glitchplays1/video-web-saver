@@ -41,10 +41,19 @@
   </div>
 
   <div id="authScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-black px-4">
-    <form id="authForm" class="w-[min(420px,92vw)] rounded-2xl bg-bar p-6">
-      <img class="mx-auto h-auto w-32" src="yaflix-logo.svg" alt="Yaflix" />
-      <h2 id="authTitle" class="mt-4 text-center text-2xl font-semibold">Sign in</h2>
-      <div class="mt-4 grid grid-cols-2 gap-2">
+    <img class="absolute inset-0 h-full w-full object-cover opacity-40" src="posters/anime/anime-4.png" alt="" />
+    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black"></div>
+    <form id="authForm" class="relative z-10 w-[min(440px,92vw)] rounded-2xl border border-white/10 bg-black/70 p-6 shadow-2xl backdrop-blur">
+      <img class="mx-auto h-auto w-36" src="yaflix-logo.svg" alt="Yaflix" />
+      <h2 id="authTitle" class="mt-4 text-center text-3xl font-semibold">Sign in</h2>
+      <p class="mt-1 text-center text-sm text-slate-300">Use your Yaflix account or GitHub.</p>
+      <button id="githubSignIn" class="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-white py-3 font-bold text-black" type="button">Sign in with GitHub</button>
+      <div class="my-4 flex items-center gap-3 text-xs text-slate-400">
+        <span class="h-px flex-1 bg-white/20"></span>
+        or
+        <span class="h-px flex-1 bg-white/20"></span>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
         <button id="showSignIn" class="rounded-full bg-white py-2 font-bold text-black" type="button">Sign in</button>
         <button id="showSignUp" class="rounded-full bg-white/20 py-2" type="button">Sign up</button>
       </div>
@@ -55,7 +64,7 @@
         <input id="authPass" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="password" minlength="4" required />
       </label>
       <p id="authError" class="mt-2 min-h-5 text-sm text-red-300"></p>
-      <button id="authSubmit" class="mt-2 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Sign in</button>
+      <button id="authSubmit" class="mt-2 w-full rounded-md bg-red-600 py-2 font-bold text-white" type="submit">Sign in</button>
     </form>
   </div>
 
@@ -316,7 +325,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=72"></script>
+  <script src="app.js?v=73"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

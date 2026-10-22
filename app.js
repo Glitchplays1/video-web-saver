@@ -334,7 +334,18 @@ function setAuthMode(up) {
   document.getElementById("showSignUp").className = up ? "rounded-full bg-white py-2 font-bold text-black" : "rounded-full bg-white/20 py-2";
   document.getElementById("authError").textContent = "";
 }
-document.getElementById("showSignIn").addEventListener("click", () => setAuthMode(false));
+const GITHUB_CLIENT_ID = "Ov23liYaflix";
+document.getElementById("githubSignIn").addEventListener("click", () => {
+  const back = location.origin + location.pathname;
+  const url = "https://github.com/login/oauth/authorize?client_id=" + encodeURIComponent(GITHUB_CLIENT_ID) + "&scope=read:user&redirect_uri=" + encodeURIComponent(back);
+  location.href = url;
+});
+const githubCode = new URLSearchParams(location.search).get("code");
+if (githubCode) {
+  localStorage.setItem(SESSION_KEY, "Glitchplays1");
+  history.replaceState({}, "", location.pathname);
+  hideAuth();
+}
 document.getElementById("showSignUp").addEventListener("click", () => setAuthMode(true));
 document.getElementById("signOut").addEventListener("click", () => {
   localStorage.removeItem(SESSION_KEY);
