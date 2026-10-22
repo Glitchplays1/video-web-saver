@@ -334,7 +334,7 @@ function setAuthMode(up) {
   document.getElementById("showSignUp").className = up ? "rounded-full bg-white py-2 font-bold text-black" : "rounded-full bg-white/20 py-2";
   document.getElementById("authError").textContent = "";
 }
-const GITHUB_CLIENT_ID = "Ov23liYaflix";
+const GITHUB_CLIENT_ID = "Ov23liKtuNqSJjj4oK85";
 document.getElementById("githubSignIn").addEventListener("click", () => {
   const back = location.origin + location.pathname;
   const url = "https://github.com/login/oauth/authorize?client_id=" + encodeURIComponent(GITHUB_CLIENT_ID) + "&scope=read:user&redirect_uri=" + encodeURIComponent(back);
