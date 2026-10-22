@@ -43,7 +43,10 @@
   <div id="authScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-black px-4">
     <form id="authForm" class="w-[min(420px,92vw)] rounded-2xl bg-bar p-6">
       <img class="mx-auto h-auto w-32" src="yaflix-logo.svg" alt="Yaflix" />
-      <h2 id="authTitle" class="mt-4 text-center text-2xl font-semibold">Sign in</h2>
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <button id="showSignIn" class="rounded-full bg-white py-2 font-bold text-black" type="button">Sign in</button>
+        <button id="showSignUp" class="rounded-full bg-white/20 py-2" type="button">Sign up</button>
+      </div>
       <label class="mt-4 block text-sm">Username
         <input id="authUser" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="24" required />
       </label>
@@ -51,8 +54,7 @@
         <input id="authPass" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="password" minlength="4" required />
       </label>
       <p id="authError" class="mt-2 min-h-5 text-sm text-red-300"></p>
-      <button class="mt-2 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Sign in</button>
-      <button id="authSwitch" class="mt-3 w-full text-sm text-slate-300" type="button">Need an account? Sign up</button>
+      <button id="authSubmit" class="mt-2 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Sign in</button>
     </form>
   </div>
     <img id="whoBackdrop" class="absolute inset-0 h-full w-full object-cover object-top opacity-60" alt="" />
@@ -263,7 +265,7 @@
       <input id="autoplayToggle" type="checkbox" class="h-5 w-5" checked />
       Start the next episode after a countdown
     </label>
-    <button id="installBtn" class="mt-4 rounded-full border border-slate-500 px-4 py-2" type="button">Add to Home Screen</button>
+    <button id="signOut" class="mt-4 rounded-full border border-slate-500 px-4 py-2" type="button">Sign out</button>
   </section>
 
   <section id="about" data-view-panel="about" class="relative z-10 mx-auto my-6 ml-48 hidden w-[min(860px,calc(100%-13rem))] rounded-2xl bg-bar p-5">
@@ -311,7 +313,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=70"></script>
+  <script src="app.js?v=71"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

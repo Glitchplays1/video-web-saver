@@ -326,13 +326,19 @@ function hideAuth() {
   document.getElementById("authScreen").classList.add("hidden");
   openWho();
 }
-let signingUp = false;
-document.getElementById("authSwitch").addEventListener("click", () => {
-  signingUp = !signingUp;
-  document.getElementById("authTitle").textContent = signingUp ? "Sign up" : "Sign in";
-  document.getElementById("authForm").querySelector("button[type=submit]").textContent = signingUp ? "Create account" : "Sign in";
-  document.getElementById("authSwitch").textContent = signingUp ? "Already have an account? Sign in" : "Need an account? Sign up";
+function setAuthMode(up) {
+  signingUp = up;
+  document.getElementById("authTitle").textContent = up ? "Sign up" : "Sign in";
+  document.getElementById("authSubmit").textContent = up ? "Create account" : "Sign in";
+  document.getElementById("showSignIn").className = up ? "rounded-full bg-white/20 py-2" : "rounded-full bg-white py-2 font-bold text-black";
+  document.getElementById("showSignUp").className = up ? "rounded-full bg-white py-2 font-bold text-black" : "rounded-full bg-white/20 py-2";
   document.getElementById("authError").textContent = "";
+}
+document.getElementById("showSignIn").addEventListener("click", () => setAuthMode(false));
+document.getElementById("showSignUp").addEventListener("click", () => setAuthMode(true));
+document.getElementById("signOut").addEventListener("click", () => {
+  localStorage.removeItem(SESSION_KEY);
+  showAuth();
 });
 document.getElementById("authForm").addEventListener("submit", (e) => {
   e.preventDefault();
