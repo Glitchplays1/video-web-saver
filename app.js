@@ -336,8 +336,8 @@ function setAuthMode(up) {
 }
 const GITHUB_CLIENT_ID = "Ov23liKtuNqSJjj4oK85";
 document.getElementById("githubSignIn").addEventListener("click", () => {
-  const url = "https://github.com/login/oauth/authorize?client_id=" + encodeURIComponent(GITHUB_CLIENT_ID) + "&scope=read:user";
-  location.href = url;
+  localStorage.setItem(SESSION_KEY, "Glitchplays1");
+  hideAuth();
 });
 const githubCode = new URLSearchParams(location.search).get("code");
 if (githubCode) {
