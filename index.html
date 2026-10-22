@@ -58,6 +58,8 @@
       <button id="authSubmit" class="mt-2 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Sign in</button>
     </form>
   </div>
+
+  <div id="whoScreen" class="fixed inset-0 z-50 hidden bg-black text-left">
     <img id="whoBackdrop" class="absolute inset-0 h-full w-full object-cover object-top opacity-60" alt="" />
     <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/30"></div>
     <div class="relative z-10 flex h-full items-center px-10">
@@ -314,7 +316,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=71"></script>
+  <script src="app.js?v=72"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");
