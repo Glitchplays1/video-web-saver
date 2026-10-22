@@ -40,7 +40,21 @@
     <p class="mt-3 text-xs tracking-[0.42em]">LOADING</p>
   </div>
 
-  <div id="whoScreen" class="fixed inset-0 z-50 hidden bg-black text-left">
+  <div id="authScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-black px-4">
+    <form id="authForm" class="w-[min(420px,92vw)] rounded-2xl bg-bar p-6">
+      <img class="mx-auto h-auto w-32" src="yaflix-logo.svg" alt="Yaflix" />
+      <h2 id="authTitle" class="mt-4 text-center text-2xl font-semibold">Sign in</h2>
+      <label class="mt-4 block text-sm">Username
+        <input id="authUser" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" maxlength="24" required />
+      </label>
+      <label class="mt-3 block text-sm">Password
+        <input id="authPass" class="mt-1 w-full rounded-lg border border-slate-600 bg-ink px-3 py-2" type="password" minlength="4" required />
+      </label>
+      <p id="authError" class="mt-2 min-h-5 text-sm text-red-300"></p>
+      <button class="mt-2 w-full rounded-md bg-white py-2 font-bold text-black" type="submit">Sign in</button>
+      <button id="authSwitch" class="mt-3 w-full text-sm text-slate-300" type="button">Need an account? Sign up</button>
+    </form>
+  </div>
     <img id="whoBackdrop" class="absolute inset-0 h-full w-full object-cover object-top opacity-60" alt="" />
     <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/30"></div>
     <div class="relative z-10 flex h-full items-center px-10">
@@ -297,7 +311,7 @@
     <p class="mt-2 bg-bar py-2 text-sm">HTML · Tailwind CSS · JavaScript · Netlify</p>
   </footer>
   <script src="ratings.js?v=2"></script>
-  <script src="app.js?v=69"></script>
+  <script src="app.js?v=70"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
     var closeAlert = document.getElementById("closeAlert");

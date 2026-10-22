@@ -305,6 +305,62 @@ function setSideBar(show) {
     main.classList.toggle("w-full", !show);
   }
 }
+const ACCOUNT_KEY = "yaflix-accounts";
+const SESSION_KEY = "yaflix-user";
+function hashPass(value) {
+  let hash = 0;
+  for (const ch of String(value)) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return String(hash);
+}
+function accounts() {
+  try { return JSON.parse(localStorage.getItem(ACCOUNT_KEY) || "[]"); } catch { return []; }
+}
+function saveAccounts(list) {
+  localStorage.setItem(ACCOUNT_KEY, JSON.stringify(list));
+}
+function showAuth() {
+  document.getElementById("authScreen").classList.remove("hidden");
+  document.getElementById("whoScreen").classList.add("hidden");
+}
+function hideAuth() {
+  document.getElementById("authScreen").classList.add("hidden");
+  openWho();
+}
+let signingUp = false;
+document.getElementById("authSwitch").addEventListener("click", () => {
+  signingUp = !signingUp;
+  document.getElementById("authTitle").textContent = signingUp ? "Sign up" : "Sign in";
+  document.getElementById("authForm").querySelector("button[type=submit]").textContent = signingUp ? "Create account" : "Sign in";
+  document.getElementById("authSwitch").textContent = signingUp ? "Already have an account? Sign in" : "Need an account? Sign up";
+  document.getElementById("authError").textContent = "";
+});
+document.getElementById("authForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const user = document.getElementById("authUser").value.trim();
+  const pass = document.getElementById("authPass").value;
+  const error = document.getElementById("authError");
+  if (!user || pass.length < 4) {
+    error.textContent = "Use a username and a password with at least 4 characters.";
+    return;
+  }
+  const list = accounts();
+  const found = list.find((item) => item.user.toLowerCase() === user.toLowerCase());
+  if (signingUp) {
+    if (found) {
+      error.textContent = "That username is already used.";
+      return;
+    }
+    list.push({ user, pass: hashPass(pass) });
+    saveAccounts(list);
+  } else if (!found || found.pass !== hashPass(pass)) {
+    error.textContent = "Wrong username or password.";
+    return;
+  }
+  localStorage.setItem(SESSION_KEY, user);
+  hideAuth();
+});
+if (localStorage.getItem(SESSION_KEY)) hideAuth();
+else showAuth();
 function openWho() {
   const screen = document.getElementById("whoScreen");
   if (!screen) return;
